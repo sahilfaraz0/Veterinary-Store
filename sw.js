@@ -1,12 +1,14 @@
-const CACHE_NAME = 'fahad-vet-cache-v1';
+const CACHE_NAME = 'vet-store-cache-v2';
 const ASSETS_TO_CACHE = [
   '/',
   '/index.html',
+  '/login.html',
   '/manifest.json',
   '/css/style.css',
   '/css/print.css',
   '/js/config.js',
   '/js/auth.js',
+  '/js/login.js',
   '/js/dashboard.js',
   '/js/inventory.js',
   '/js/pos.js',
