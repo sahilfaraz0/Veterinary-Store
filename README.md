@@ -17,8 +17,8 @@
 **Login Welcome Screen**
 ![Login Welcome](./assets/login.gif)
 
-*(Add your main screenshot or GIF here in the `/assets` folder)*
-![POS Checkout Screen](./assets/pos-screen.png)
+**Admin Dashboard**
+![Admin Dashboard](./assets/dashboard.mp4)
 
 *(Add a secondary screenshot of the metrics or dashboard)*
 ![Admin Dashboard](./assets/admin-dashboard.png)
