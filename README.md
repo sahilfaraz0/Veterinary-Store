@@ -8,7 +8,7 @@
 **Veterinary Store & Clinic** is a state-of-the-art, full-stack Point of Sale (POS) and Veterinary Clinic Management Single-Page Application (SPA). Engineered with a stunning **Liquid Glassmorphism UI**, offline-first Progressive Web App (PWA) resilience, and cloud database synchronization, this platform streamlines high-speed retail checkout, inventory tracking, clinical patient relationship management (CRM), and business intelligence.
 
 👉 **[View Live Application](https://veterinary-store.vercel.app)**
-🔒 `Email:`admin@vetstore.com `Password:`vetstore123
+* `Email:`admin@vetstore.com `Password:`vetstore123
 
 ---
 
