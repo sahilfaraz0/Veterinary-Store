@@ -182,7 +182,13 @@ async function handleLoginSubmit(email, password) {
   showToast('Supabase database connection not initialized.', 'error');
 }
 
-async function logout() {
+async function logout(isIdle = false) {
+  if (isIdle === true || (typeof isIdle === 'object' && isIdle && isIdle.isIdle === true)) {
+    try {
+      sessionStorage.setItem('idle_logout_reason', 'inactivity');
+    } catch (e) {}
+  }
+
   if (window.supabaseClient) {
     try {
       await window.supabaseClient.auth.signOut();
@@ -231,11 +237,13 @@ function updateAuthUI() {
     return;
   }
 
-  if (usernameEl) usernameEl.textContent = user.full_name;
+  if (authLoading) authLoading.classList.add('hidden');
+  if (appContent) appContent.classList.remove('hidden');
+  if (usernameEl) usernameEl.textContent = user.full_name || 'Staff Member';
   if (roleEl) {
-    roleEl.textContent = `${user.role} Role`;
+    roleEl.textContent = user.role || 'Cashier';
     if (user.role === 'Admin') {
-      roleEl.className = 'block text-[10px] font-semibold text-emerald-600 dark:text-emerald-400 uppercase tracking-wider whitespace-nowrap';
+      roleEl.className = 'block text-[10px] font-extrabold text-emerald-600 dark:text-emerald-400 uppercase tracking-wider whitespace-nowrap';
     } else {
       roleEl.className = 'block text-[10px] font-semibold text-sky-600 dark:text-sky-400 uppercase tracking-wider whitespace-nowrap';
     }
@@ -266,6 +274,47 @@ function updateAuthUI() {
   }
 
   if (typeof renderAdminAlerts === 'function') renderAdminAlerts();
+  setupIdleLogoutWatchdog();
   window.dispatchEvent(new CustomEvent('app-rbac-changed'));
   if (window.lucide) lucide.createIcons();
 }
+
+let idleTimer = null;
+let warningTimer = null;
+let lastInteraction = Date.now();
+let hasIdleWatchdogStarted = false;
+
+function setupIdleLogoutWatchdog() {
+  if (hasIdleWatchdogStarted) return;
+  hasIdleWatchdogStarted = true;
+
+  const resetIdleTimers = () => {
+    const now = Date.now();
+    if (now - lastInteraction < 1000 && idleTimer !== null) return;
+    lastInteraction = now;
+
+    if (idleTimer) clearTimeout(idleTimer);
+    if (warningTimer) clearTimeout(warningTimer);
+
+    warningTimer = setTimeout(() => {
+      if (appState.currentUser && typeof showToast === 'function') {
+        showToast('⏳ Inactivity Warning: You will be automatically logged out in 60 seconds due to inactivity. Click or press any key to stay logged in.', 'warning');
+      }
+    }, 14 * 60 * 1000);
+
+    idleTimer = setTimeout(() => {
+      if (appState.currentUser) {
+        logout(true);
+      }
+    }, 15 * 60 * 1000);
+  };
+
+  ['mousemove', 'keydown', 'click', 'touchstart', 'scroll'].forEach(evt => {
+    window.addEventListener(evt, resetIdleTimers, { passive: true });
+  });
+
+  resetIdleTimers();
+}
+
+window.logout = logout;
+window.setupIdleLogoutWatchdog = setupIdleLogoutWatchdog;

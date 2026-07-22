@@ -8,6 +8,14 @@ document.addEventListener('DOMContentLoaded', async () => {
 
   initLoginSupabase();
 
+  try {
+    const idleReason = sessionStorage.getItem('idle_logout_reason');
+    if (idleReason === 'inactivity') {
+      sessionStorage.removeItem('idle_logout_reason');
+      showLoginError('You were automatically logged out due to inactivity to secure portal data.');
+    }
+  } catch (e) {}
+
   const themeToggleBtn = document.getElementById('btn-theme-toggle-login');
   if (themeToggleBtn) {
     themeToggleBtn.addEventListener('click', () => {

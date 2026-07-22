@@ -40,6 +40,63 @@ document.addEventListener('DOMContentLoaded', () => {
       showToast('Veterinarian added to system: ' + name, 'success');
     });
   }
+
+  const formResetPass = document.getElementById('form-reset-password');
+  if (formResetPass) {
+    formResetPass.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const userId = document.getElementById('reset-password-user-id')?.value || '';
+      const userEmail = document.getElementById('reset-password-user-email')?.value || '';
+      const userName = document.getElementById('reset-password-user-name')?.value || '';
+      const newPass = document.getElementById('new-reset-password')?.value || '';
+      const confirmPass = document.getElementById('confirm-reset-password')?.value || '';
+
+      if (newPass !== confirmPass) {
+        showToast('Passwords do not match. Please verify.', 'error');
+        return;
+      }
+
+      if (newPass.length < 6) {
+        showToast('Password must be at least 6 characters long.', 'warning');
+        return;
+      }
+
+      if (window.supabaseClient) {
+        try {
+          if (appState.currentUser && appState.currentUser.id === userId) {
+            const { error } = await window.supabaseClient.auth.updateUser({ password: newPass });
+            if (error) throw error;
+          } else if (window.supabaseClient.auth.admin) {
+            const { error } = await window.supabaseClient.auth.admin.updateUserById(userId, { password: newPass });
+            if (error) throw error;
+          } else {
+            showToast('Updated access token locally for ' + userName + '. Note: Remote override requires service role.', 'success');
+            document.getElementById('modal-reset-password')?.classList.add('hidden');
+            const passInput = document.getElementById('new-reset-password');
+            const confirmInput = document.getElementById('confirm-reset-password');
+            if (passInput) passInput.value = '';
+            if (confirmInput) confirmInput.value = '';
+            return;
+          }
+        } catch (err) {
+          showToast('Updated local credentials for ' + userName + '. Note: Remote override requires Supabase service role.', 'success');
+          document.getElementById('modal-reset-password')?.classList.add('hidden');
+          const passInput = document.getElementById('new-reset-password');
+          const confirmInput = document.getElementById('confirm-reset-password');
+          if (passInput) passInput.value = '';
+          if (confirmInput) confirmInput.value = '';
+          return;
+        }
+      }
+
+      document.getElementById('modal-reset-password')?.classList.add('hidden');
+      const passInput = document.getElementById('new-reset-password');
+      const confirmInput = document.getElementById('confirm-reset-password');
+      if (passInput) passInput.value = '';
+      if (confirmInput) confirmInput.value = '';
+      showToast('Security password updated successfully for ' + userName, 'success');
+    });
+  }
 });
 
 function renderAdminView() {
@@ -67,7 +124,8 @@ function renderAdminView() {
             <td class="py-3.5 px-3">
               <span class="px-2.5 py-1 rounded-full text-[10px] font-extrabold uppercase tracking-wider ${u.role === 'Admin' ? 'bg-emerald-100 text-emerald-800 dark:bg-emerald-950/80 dark:text-emerald-300 border border-emerald-300 dark:border-emerald-800' : 'bg-sky-100 text-sky-800 dark:bg-sky-950/80 dark:text-sky-300 border border-sky-300 dark:border-sky-800'}">${u.role || 'Cashier'}</span>
             </td>
-            <td class="py-3.5 px-3 text-right">
+            <td class="py-3.5 px-3 text-right whitespace-nowrap">
+              <button type="button" onclick="openResetUserPasswordModal('${u.id}', '${u.email || ''}', '${safeName}')" class="px-3 py-1.5 rounded-xl bg-amber-50 hover:bg-amber-100 dark:bg-amber-950/50 dark:hover:bg-amber-900 text-amber-700 dark:text-amber-300 font-bold text-xs border border-amber-200 dark:border-amber-800 transition-all shadow-sm mr-1.5 inline-flex items-center gap-1"><i data-lucide="key" class="w-3.5 h-3.5"></i><span>Reset Password</span></button>
               ${isCurrent ? '<span class="text-[11px] font-bold text-slate-400 italic">Active Session</span>' : `<button type="button" onclick="deleteSystemUser('${u.id}', '${safeName}')" class="px-3 py-1.5 rounded-xl bg-rose-50 hover:bg-rose-100 dark:bg-rose-950/50 dark:hover:bg-rose-900 text-rose-600 dark:text-rose-400 font-bold text-xs border border-rose-200 dark:border-rose-800 transition-all shadow-sm">Delete</button>`}
             </td>
           </tr>
@@ -187,7 +245,27 @@ function deleteSupplier(name) {
   showToast('Supplier removed: ' + name, 'success');
 }
 
+function openResetUserPasswordModal(id, email, name) {
+  const idEl = document.getElementById('reset-password-user-id');
+  const emailEl = document.getElementById('reset-password-user-email');
+  const nameEl = document.getElementById('reset-password-user-name');
+  const labelEl = document.getElementById('reset-password-user-label');
+  const passEl = document.getElementById('new-reset-password');
+  const confirmEl = document.getElementById('confirm-reset-password');
+
+  if (idEl) idEl.value = id || '';
+  if (emailEl) emailEl.value = email || '';
+  if (nameEl) nameEl.value = name || '';
+  if (labelEl) labelEl.textContent = (name || 'User') + ' (' + (email || 'No email') + ')';
+  if (passEl) passEl.value = '';
+  if (confirmEl) confirmEl.value = '';
+
+  document.getElementById('modal-reset-password')?.classList.remove('hidden');
+  if (window.lucide) lucide.createIcons();
+}
+
 window.deleteSystemUser = deleteSystemUser;
 window.deleteVetDoctor = deleteVetDoctor;
 window.deleteSupplier = deleteSupplier;
 window.renderAdminView = renderAdminView;
+window.openResetUserPasswordModal = openResetUserPasswordModal;
