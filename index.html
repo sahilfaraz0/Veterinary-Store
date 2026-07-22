@@ -1,0 +1,1411 @@
+<!DOCTYPE html>
+<html lang="en" class="dark">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="theme-color" content="#10b981" />
+  <meta name="mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+  <meta name="apple-mobile-web-app-title" content="Vet Store" />
+  <link rel="manifest" href="manifest.json" />
+  <link rel="apple-touch-icon" href="https://images.unsplash.com/photo-1584308666744-24d5c474f2ae?w=192&auto=format&fit=crop&q=80" />
+  <title>Veterinary Store & Clinic - Islamabad</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          colors: {
+            brand: {
+              50: '#ecfdf5',
+              100: '#d1fae5',
+              500: '#10b981',
+              600: '#059669',
+              700: '#047857',
+              900: '#064e3b'
+            }
+          }
+        }
+      }
+    };
+  </script>
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="https://unpkg.com/html5-qrcode" type="text/javascript"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.2/anime.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/browser-image-compression@2.0.2/dist/browser-image-compression.js"></script>
+  <link rel="stylesheet" href="css/style.css" />
+  <link rel="stylesheet" href="css/print.css" />
+</head>
+<body class="bg-slate-50 dark:bg-slate-950 text-slate-800 dark:text-slate-100 min-h-screen flex flex-col font-sans transition-colors duration-200 relative overflow-x-hidden">
+  <div class="fixed inset-0 pointer-events-none z-0 overflow-hidden">
+    <div class="liquid-bg-shape bg-teal-500/25 dark:bg-teal-500/20 w-[680px] h-[680px] rounded-full blur-3xl absolute -top-36 -left-36 animate-liquid-drift-1"></div>
+    <div class="liquid-bg-shape bg-indigo-500/25 dark:bg-indigo-500/20 w-[720px] h-[720px] rounded-full blur-3xl absolute top-1/3 -right-44 animate-liquid-drift-2"></div>
+    <div class="liquid-bg-shape bg-purple-500/25 dark:bg-purple-500/20 w-[640px] h-[640px] rounded-full blur-3xl absolute -bottom-44 left-1/4 animate-liquid-drift-3"></div>
+  </div>
+  <script>
+    (function() {
+      let hasToken = Boolean(sessionStorage.getItem('vet_store_user') || sessionStorage.getItem('fahad_vet_user'));
+      if (!hasToken) {
+        for (let i = 0; i < localStorage.length; i++) {
+          const key = localStorage.key(i);
+          if (key && key.startsWith('sb-') && key.endsWith('-auth-token')) {
+            hasToken = true;
+            break;
+          }
+        }
+      }
+      if (!hasToken) {
+        window.location.replace('login.html');
+      }
+    })();
+  </script>
+  <header id="topbar" class="sticky top-3 z-40 mx-3 sm:mx-6 lg:mx-8 rounded-3xl glass-dock px-4 sm:px-6 py-3.5 no-print transition-all duration-300 shadow-xl">
+    <div class="w-full max-w-[1900px] mx-auto flex flex-row flex-wrap items-center justify-between gap-3 sm:gap-4">
+      <div class="flex items-center justify-between sm:justify-center xl:justify-start gap-3 sm:gap-6 flex-wrap sm:flex-nowrap w-full xl:w-auto">
+        <div class="flex items-center gap-3">
+          <div class="w-11 h-11 rounded-2xl bg-emerald-600 flex items-center justify-center text-white shadow-lg shadow-emerald-600/30 font-extrabold text-xl tracking-tight flex-shrink-0">
+            VS
+          </div>
+          <div>
+            <h1 class="font-extrabold text-lg text-slate-900 dark:text-white leading-tight tracking-tight whitespace-nowrap">
+              Veterinary Store & Clinic
+            </h1>
+            <p class="text-xs text-emerald-600 dark:text-emerald-400 font-bold whitespace-nowrap">Islamabad</p>
+          </div>
+        </div>
+
+        <div class="flex items-center gap-2 pl-3 sm:pl-4 border-l border-slate-200 dark:border-slate-800">
+          <div class="text-left">
+            <span id="topbar-username" class="block font-bold text-xs text-slate-900 dark:text-slate-100 whitespace-nowrap">Chief Administrator</span>
+            <span id="topbar-role" class="block text-[10px] font-semibold text-emerald-600 dark:text-emerald-400 uppercase tracking-wider whitespace-nowrap">Admin Role</span>
+          </div>
+          <button id="btn-logout" class="p-2 rounded-xl text-slate-400 hover:text-red-600 dark:hover:text-red-400 hover:bg-red-50 dark:hover:bg-red-950/30 transition-all flex-shrink-0" title="Secure Logout">
+            <i data-lucide="log-out" class="w-4 h-4"></i>
+          </button>
+        </div>
+      </div>
+
+      <div class="flex items-center justify-center gap-2 sm:gap-2.5 flex-wrap sm:flex-nowrap w-full xl:w-auto xl:ml-auto">
+        <button id="btn-header-low" onclick="triggerDashboardHighlight('low-stock')" class="px-3 py-1.5 rounded-xl border-2 border-slate-300 dark:border-amber-500/80 bg-slate-100 dark:bg-slate-800 text-slate-800 dark:text-amber-300 hover:bg-slate-200 dark:hover:bg-slate-700 hover:border-slate-400 dark:hover:border-amber-400 transition-all duration-200 flex items-center gap-1.5 font-bold text-xs shadow-sm cursor-pointer whitespace-nowrap focus:outline-none focus:ring-2 focus:ring-amber-500/20">
+          <i data-lucide="alert-triangle" class="w-4 h-4 text-amber-500 animate-pulse"></i>
+          <span>Low Stock:</span>
+          <span id="header-low-count" class="font-mono px-1.5 py-0.5 rounded-full bg-amber-500 text-slate-950 text-[10px] font-extrabold">0</span>
+        </button>
+
+        <button id="btn-header-exp" onclick="triggerDashboardHighlight('expiry')" class="px-3 py-1.5 rounded-xl border-2 border-slate-300 dark:border-rose-500/80 bg-slate-100 dark:bg-slate-800 text-slate-800 dark:text-rose-300 hover:bg-slate-200 dark:hover:bg-slate-700 hover:border-slate-400 dark:hover:border-rose-400 transition-all duration-200 flex items-center gap-1.5 font-bold text-xs shadow-sm cursor-pointer whitespace-nowrap focus:outline-none focus:ring-2 focus:ring-rose-500/20">
+          <i data-lucide="clock" class="w-4 h-4 text-rose-500 animate-pulse"></i>
+          <span>Expiring:</span>
+          <span id="header-exp-count" class="font-mono px-1.5 py-0.5 rounded-full bg-rose-500 text-white text-[10px] font-extrabold">0</span>
+        </button>
+
+        <button id="btn-header-audit" onclick="switchView('admin')" class="hidden px-3 py-1.5 rounded-xl border-2 border-slate-300 dark:border-indigo-500/80 bg-slate-100 dark:bg-slate-800 text-slate-800 dark:text-indigo-300 hover:bg-slate-200 dark:hover:bg-slate-700 hover:border-slate-400 dark:hover:border-indigo-400 transition-all duration-200 flex items-center gap-1.5 font-bold text-xs shadow-sm cursor-pointer whitespace-nowrap focus:outline-none focus:ring-2 focus:ring-indigo-500/20">
+          <i data-lucide="shield-alert" class="w-4 h-4 text-indigo-400"></i>
+          Audit Alerts <span id="header-alert-count" class="font-mono px-1.5 py-0.5 rounded-full bg-indigo-600 text-white text-[10px]">0</span>
+        </button>
+
+        <button id="btn-topbar-camera" class="px-3 py-1.5 rounded-xl border-2 border-slate-300 dark:border-emerald-500/80 bg-slate-100 dark:bg-slate-800 text-slate-800 dark:text-emerald-300 hover:bg-slate-200 dark:hover:bg-slate-700 hover:border-slate-400 dark:hover:border-emerald-400 font-semibold text-xs flex items-center gap-1.5 transition-all duration-200 shadow-sm whitespace-nowrap focus:outline-none focus:ring-2 focus:ring-emerald-500/20">
+          <i data-lucide="camera" class="w-4 h-4 text-emerald-400"></i>
+          <span>Scan Code</span>
+        </button>
+
+        <button id="btn-theme-toggle" type="button" onclick="toggleTheme()" class="px-3.5 py-1.5 rounded-xl border-2 border-slate-300 dark:border-amber-500/80 bg-slate-100 dark:bg-slate-800 text-slate-800 dark:text-amber-300 hover:bg-slate-200 dark:hover:bg-slate-700 hover:border-slate-400 dark:hover:border-amber-400 transition-all duration-200 shadow-sm flex items-center gap-2 font-bold text-xs flex-shrink-0 cursor-pointer" title="Toggle Theme">
+          <i data-lucide="moon" class="w-4 h-4 hidden dark:block text-amber-400 fill-amber-400/20"></i>
+          <i data-lucide="sun" class="w-4 h-4 block dark:hidden text-amber-600 fill-amber-500/20"></i>
+          <span class="hidden sm:inline">Theme</span>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <div id="floating-dock-container" class="sticky top-[96px] z-30 mx-2 sm:mx-6 lg:mx-8 mt-4 sm:mt-6 mb-4 sm:mb-5 flex justify-center max-w-[98vw] no-print transition-all duration-200">
+    <nav id="floating-dock" class="glass-dock rounded-full px-2.5 sm:px-4 py-1.5 sm:py-2.5 flex items-center justify-start gap-1 sm:gap-2 shadow-2xl transition-all duration-300 w-fit max-w-full overflow-x-auto no-scrollbar">
+      <button data-view="dashboard" class="nav-tab dock-item group relative px-3 sm:px-4 lg:px-5 py-2 sm:py-2.5 rounded-full text-xs sm:text-sm font-extrabold transition-all duration-200 hover:scale-105 active:scale-95 hover:-translate-y-0.5 hover:shadow-md bg-emerald-600 text-white shadow-lg shadow-emerald-600/30 flex items-center gap-1.5 sm:gap-2 flex-shrink-0 whitespace-nowrap">
+        <i data-lucide="layout-dashboard" class="w-4.5 h-4.5 transition-transform duration-200"></i>
+        <span class="dock-label">Dashboard</span>
+      </button>
+      <button data-view="inventory" class="nav-tab dock-item group relative px-3 sm:px-4 lg:px-5 py-2 sm:py-2.5 rounded-full text-xs sm:text-sm font-extrabold transition-all duration-200 hover:scale-105 active:scale-95 hover:-translate-y-0.5 hover:shadow-md text-slate-700 dark:text-slate-200 hover:text-emerald-600 dark:hover:text-emerald-400 hover:bg-white/60 dark:hover:bg-slate-800/60 flex items-center gap-1.5 sm:gap-2 flex-shrink-0 whitespace-nowrap">
+        <i data-lucide="boxes" class="w-4.5 h-4.5 transition-transform duration-200"></i>
+        <span class="dock-label">Inventory Catalog</span>
+      </button>
+      <button data-view="pos" class="nav-tab dock-item group relative px-3 sm:px-4 lg:px-5 py-2 sm:py-2.5 rounded-full text-xs sm:text-sm font-extrabold transition-all duration-200 hover:scale-105 active:scale-95 hover:-translate-y-0.5 hover:shadow-md text-slate-700 dark:text-slate-200 hover:text-emerald-600 dark:hover:text-emerald-400 hover:bg-white/60 dark:hover:bg-slate-800/60 flex items-center gap-1.5 sm:gap-2 flex-shrink-0 whitespace-nowrap">
+        <i data-lucide="shopping-cart" class="w-4.5 h-4.5 transition-transform duration-200"></i>
+        <span class="dock-label">POS Register</span>
+      </button>
+      <button data-view="sales" class="nav-tab dock-item group relative px-3 sm:px-4 lg:px-5 py-2 sm:py-2.5 rounded-full text-xs sm:text-sm font-extrabold transition-all duration-200 hover:scale-105 active:scale-95 hover:-translate-y-0.5 hover:shadow-md text-slate-700 dark:text-slate-200 hover:text-emerald-600 dark:hover:text-emerald-400 hover:bg-white/60 dark:hover:bg-slate-800/60 flex items-center gap-1.5 sm:gap-2 flex-shrink-0 whitespace-nowrap">
+        <i data-lucide="receipt" class="w-4.5 h-4.5 transition-transform duration-200"></i>
+        <span class="dock-label">Sales Tracker</span>
+      </button>
+      <button data-view="clients" class="nav-tab dock-item group relative px-3 sm:px-4 lg:px-5 py-2 sm:py-2.5 rounded-full text-xs sm:text-sm font-extrabold transition-all duration-200 hover:scale-105 active:scale-95 hover:-translate-y-0.5 hover:shadow-md text-slate-700 dark:text-slate-200 hover:text-emerald-600 dark:hover:text-emerald-400 hover:bg-white/60 dark:hover:bg-slate-800/60 flex items-center gap-1.5 sm:gap-2 flex-shrink-0 whitespace-nowrap">
+        <i data-lucide="users" class="w-4.5 h-4.5 transition-transform duration-200"></i>
+        <span class="dock-label">Clients CRM</span>
+      </button>
+      <button id="tab-reports" data-view="reports" class="nav-tab dock-item group relative px-3 sm:px-4 lg:px-5 py-2 sm:py-2.5 rounded-full text-xs sm:text-sm font-extrabold transition-all duration-200 hover:scale-105 active:scale-95 hover:-translate-y-0.5 hover:shadow-md text-slate-700 dark:text-slate-200 hover:text-emerald-600 dark:hover:text-emerald-400 hover:bg-white/60 dark:hover:bg-slate-800/60 flex items-center gap-1.5 sm:gap-2 flex-shrink-0 whitespace-nowrap">
+        <i data-lucide="bar-chart-3" class="w-4.5 h-4.5 transition-transform duration-200"></i>
+        <span class="dock-label">Admin Reports</span>
+      </button>
+      <button id="tab-admin" data-view="admin" class="nav-tab dock-item hidden group relative px-3 sm:px-4 lg:px-5 py-2 sm:py-2.5 rounded-full text-xs sm:text-sm font-extrabold transition-all duration-200 hover:scale-105 active:scale-95 hover:-translate-y-0.5 hover:shadow-md text-slate-700 dark:text-slate-200 hover:text-emerald-600 dark:hover:text-emerald-400 hover:bg-white/60 dark:hover:bg-slate-800/60 flex items-center gap-1.5 sm:gap-2 flex-shrink-0 whitespace-nowrap">
+        <i data-lucide="shield" class="w-4.5 h-4.5 transition-transform duration-200"></i>
+        <span class="dock-label">Control Center</span>
+      </button>
+    </nav>
+  </div>
+
+  <div id="auth-loading" class="w-full max-w-[1900px] mx-auto px-4 sm:px-6 lg:px-10 py-6 space-y-6 relative z-10 font-sans">
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6">
+      <div class="glass-card skeleton-liquid-wave h-36 sm:h-44 rounded-3xl p-6 flex flex-col justify-between border border-white/40 dark:border-white/10">
+        <div class="w-1/2 h-4 rounded-xl bg-white/20 dark:bg-white/10"></div>
+        <div class="w-3/4 h-8 rounded-2xl bg-white/30 dark:bg-white/15"></div>
+      </div>
+      <div class="glass-card skeleton-liquid-wave h-36 sm:h-44 rounded-3xl p-6 flex flex-col justify-between border border-white/40 dark:border-white/10">
+        <div class="w-1/3 h-4 rounded-xl bg-white/20 dark:bg-white/10"></div>
+        <div class="w-2/3 h-8 rounded-2xl bg-white/30 dark:bg-white/15"></div>
+      </div>
+      <div class="glass-card skeleton-liquid-wave h-36 sm:h-44 rounded-3xl p-6 flex flex-col justify-between border border-white/40 dark:border-white/10">
+        <div class="w-2/5 h-4 rounded-xl bg-white/20 dark:bg-white/10"></div>
+        <div class="w-4/5 h-8 rounded-2xl bg-white/30 dark:bg-white/15"></div>
+      </div>
+      <div class="glass-card skeleton-liquid-wave h-36 sm:h-44 rounded-3xl p-6 flex flex-col justify-between border border-white/40 dark:border-white/10">
+        <div class="w-1/2 h-4 rounded-xl bg-white/20 dark:bg-white/10"></div>
+        <div class="w-3/5 h-8 rounded-2xl bg-white/30 dark:bg-white/15"></div>
+      </div>
+    </div>
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+      <div class="glass-card skeleton-liquid-wave h-80 lg:col-span-2 rounded-3xl p-6 flex flex-col justify-between border border-white/40 dark:border-white/10">
+        <div class="w-1/4 h-6 rounded-xl bg-white/20 dark:bg-white/10"></div>
+        <div class="w-full h-48 rounded-2xl bg-white/15 dark:bg-white/5"></div>
+      </div>
+      <div class="glass-card skeleton-liquid-wave h-80 rounded-3xl p-6 flex flex-col justify-between border border-white/40 dark:border-white/10">
+        <div class="w-1/3 h-6 rounded-xl bg-white/20 dark:bg-white/10"></div>
+        <div class="w-full h-48 rounded-2xl bg-white/15 dark:bg-white/5"></div>
+      </div>
+    </div>
+  </div>
+
+  <div id="app-content" class="hidden flex flex-col flex-1">
+  <main class="flex-1 w-full max-w-[1900px] mx-auto px-4 sm:px-6 lg:px-10 py-6 pb-16 no-print relative z-10">
+
+    <section id="view-dashboard" class="space-y-8">
+      <div class="flex items-center justify-center gap-4">
+        <button onclick="switchView('pos')" class="px-5 py-3 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-sm flex items-center gap-2 shadow-md hover:shadow-xl hover:scale-105 active:scale-95 transition-all duration-200">
+          <i data-lucide="plus-circle" class="w-4.5 h-4.5"></i> Open POS Register
+        </button>
+        <button onclick="switchView('inventory')" class="px-5 py-3 rounded-xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 hover:bg-slate-50 dark:hover:bg-slate-800 text-slate-900 dark:text-white font-bold text-sm flex items-center gap-2 shadow-md hover:shadow-xl hover:scale-105 active:scale-95 transition-all duration-200">
+          <i data-lucide="package-plus" class="w-4.5 h-4.5 text-emerald-500"></i> Stock Catalog
+        </button>
+      </div>
+
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
+        <div class="p-6 rounded-3xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 shadow-sm flex flex-col justify-between space-y-4">
+          <div class="flex items-center justify-between">
+            <span class="text-xs font-bold uppercase tracking-wider text-slate-400 dark:text-slate-500">Total SKUs</span>
+            <div class="p-2.5 rounded-2xl bg-emerald-50 dark:bg-emerald-950/50 text-emerald-600 dark:text-emerald-400">
+              <i data-lucide="layers" class="w-5 h-5"></i>
+            </div>
+          </div>
+          <div>
+            <span id="kpi-total-skus" class="block text-3xl font-extrabold font-mono text-slate-900 dark:text-white">0</span>
+            <span class="text-xs font-semibold text-emerald-600 dark:text-emerald-400 mt-1 inline-block">Active veterinary medicines</span>
+          </div>
+        </div>
+
+        <div class="p-6 rounded-3xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 shadow-sm flex flex-col justify-between space-y-4">
+          <div class="flex items-center justify-between">
+            <span class="text-xs font-bold uppercase tracking-wider text-slate-400 dark:text-slate-500">Stock Valuation (PKR)</span>
+            <div class="p-2.5 rounded-2xl bg-indigo-50 dark:bg-indigo-950/50 text-indigo-600 dark:text-indigo-400">
+              <i data-lucide="wallet" class="w-5 h-5"></i>
+            </div>
+          </div>
+          <div>
+            <span id="kpi-stock-value" class="block text-3xl font-extrabold font-mono text-slate-900 dark:text-white">Rs. 0.00</span>
+            <span class="text-xs font-semibold text-indigo-600 dark:text-indigo-400 mt-1 inline-block">Purchase cost inventory</span>
+          </div>
+        </div>
+
+        <div class="p-6 rounded-3xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 shadow-sm flex flex-col justify-between space-y-4">
+          <div class="flex items-center justify-between">
+            <span class="text-xs font-bold uppercase tracking-wider text-slate-400 dark:text-slate-500">Low Stock Alerts</span>
+            <div class="p-2.5 rounded-2xl bg-amber-50 dark:bg-amber-950/50 text-amber-600 dark:text-amber-400">
+              <i data-lucide="alert-triangle" class="w-5 h-5"></i>
+            </div>
+          </div>
+          <div>
+            <span id="kpi-low-count" class="block text-3xl font-extrabold font-mono text-amber-600 dark:text-amber-400">0</span>
+            <span class="text-xs font-semibold text-amber-600 dark:text-amber-400 mt-1 inline-block">Below minimum threshold</span>
+          </div>
+        </div>
+
+        <div class="p-6 rounded-3xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 shadow-sm flex flex-col justify-between space-y-4">
+          <div class="flex items-center justify-between">
+            <span class="text-xs font-bold uppercase tracking-wider text-slate-400 dark:text-slate-500">Expiring ≤ 7 Months</span>
+            <div class="p-2.5 rounded-2xl bg-rose-50 dark:bg-rose-950/50 text-rose-600 dark:text-rose-400">
+              <i data-lucide="clock" class="w-5 h-5"></i>
+            </div>
+          </div>
+          <div>
+            <span id="kpi-expiry-count" class="block text-3xl font-extrabold font-mono text-rose-600 dark:text-rose-400">0</span>
+            <span class="text-xs font-semibold text-rose-600 dark:text-rose-400 mt-1 inline-block">Requires immediate turnover</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+        <div id="card-dashboard-low-stock" class="p-6 rounded-3xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 shadow-sm space-y-5 transition-all duration-700">
+          <div class="flex items-center justify-between border-b border-slate-100 dark:border-slate-800 pb-4">
+            <div class="flex items-center gap-3">
+              <div class="w-10 h-10 rounded-2xl bg-amber-100 dark:bg-amber-950/80 text-amber-600 dark:text-amber-400 flex items-center justify-center">
+                <i data-lucide="alert-circle" class="w-5 h-5"></i>
+              </div>
+              <div>
+                <h3 class="font-extrabold text-base text-slate-900 dark:text-white">Low Stock Replenishment</h3>
+                <p class="text-xs text-slate-500 dark:text-slate-400">Medicines requiring immediate batch order</p>
+              </div>
+            </div>
+            <span id="badge-dash-low" class="px-3 py-1 rounded-full bg-amber-100 dark:bg-amber-950/80 text-amber-800 dark:text-amber-300 font-bold text-xs font-mono">0 SKUs</span>
+          </div>
+          <div id="dashboard-low-stock-list" class="space-y-3 max-h-[420px] overflow-y-auto pr-1 custom-scrollbar"></div>
+        </div>
+
+        <div id="card-dashboard-expiry" class="p-6 rounded-3xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 shadow-sm space-y-5 transition-all duration-700">
+          <div class="flex items-center justify-between border-b border-slate-100 dark:border-slate-800 pb-4">
+            <div class="flex items-center gap-3">
+              <div class="w-10 h-10 rounded-2xl bg-rose-100 dark:bg-rose-950/80 text-rose-600 dark:text-rose-400 flex items-center justify-center">
+                <i data-lucide="calendar-clock" class="w-5 h-5"></i>
+              </div>
+              <div>
+                <h3 class="font-extrabold text-base text-slate-900 dark:text-white">Expiring Batches (≤ 7 Months)</h3>
+                <p class="text-xs text-slate-500 dark:text-slate-400">Track batches expiring within 210 days</p>
+              </div>
+            </div>
+            <span id="badge-dash-expiry" class="px-3 py-1 rounded-full bg-rose-100 dark:bg-rose-950/80 text-rose-800 dark:text-rose-300 font-bold text-xs font-mono">0 Batches</span>
+          </div>
+          <div id="dashboard-expiry-list" class="space-y-3 max-h-[420px] overflow-y-auto pr-1 custom-scrollbar"></div>
+        </div>
+      </div>
+    </section>
+
+    <section id="view-inventory" class="hidden space-y-8 -mx-2 sm:-mx-6 xl:-mx-8">
+      <div class="flex flex-wrap items-center justify-center gap-4">
+        <button id="btn-open-add-batch" class="px-5 py-3 rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white font-bold text-sm flex items-center gap-2 shadow-lg shadow-indigo-600/20 transition-all">
+          <i data-lucide="package-plus" class="w-4.5 h-4.5"></i> Receive Batch
+        </button>
+        <button id="btn-open-add-product" class="px-5 py-3 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-sm flex items-center gap-2 shadow-lg shadow-emerald-600/20 transition-all">
+          <i data-lucide="plus" class="w-4.5 h-4.5"></i> Register SKU
+        </button>
+        <button id="btn-open-select-edit" onclick="openSelectEditModal()" class="px-5 py-3 rounded-xl bg-amber-600 hover:bg-amber-700 text-white font-bold text-sm flex items-center gap-2 shadow-lg shadow-amber-600/20 transition-all">
+          <i data-lucide="edit-3" class="w-4.5 h-4.5"></i> Edit Previous Inventory
+        </button>
+      </div>
+
+      <div class="p-4 sm:p-6 rounded-3xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 shadow-sm space-y-6">
+        <div class="flex flex-col xl:flex-row items-center justify-between gap-4">
+          <div class="relative w-full xl:w-[380px]">
+            <i data-lucide="search" class="w-4 h-4 absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400"></i>
+            <input type="text" id="inventory-search-input" placeholder="Search by medicine name, barcode SKU, or category..." class="w-full pl-10 pr-4 py-2.5 rounded-2xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-xs focus:outline-none focus:ring-2 focus:ring-emerald-500 font-medium dark:text-white">
+          </div>
+          <div class="flex items-center gap-3 w-full xl:w-auto justify-end">
+            <span class="text-xs font-bold text-slate-500 dark:text-slate-400 whitespace-nowrap">Filter Category:</span>
+            <select id="inventory-category-filter" class="px-4 py-2.5 rounded-2xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-xs font-bold focus:outline-none focus:ring-2 focus:ring-emerald-500 dark:text-white min-w-[200px]">
+              <option value="ALL">All Veterinary Categories</option>
+              <option value="Antibiotics">Antibiotics</option>
+              <option value="Antiparasitic">Antiparasitic</option>
+              <option value="Pain Management">Pain Management</option>
+              <option value="Vaccines">Vaccines</option>
+              <option value="Supplements">Supplements</option>
+              <option value="Dermatological">Dermatological</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="overflow-x-auto rounded-2xl border border-slate-200 dark:border-slate-800">
+          <table class="w-full text-left border-collapse min-w-[1250px]">
+            <thead>
+              <tr class="bg-slate-50 dark:bg-slate-800/80 border-b border-slate-200 dark:border-slate-800 text-xs font-extrabold uppercase tracking-wider text-slate-500 dark:text-slate-400">
+                <th class="py-4 px-6">Medicine Product</th>
+                <th class="py-4 px-6 text-center">Category</th>
+                <th class="py-4 px-6 text-center">Rx Req</th>
+                <th class="py-4 px-6 text-center">GST Tax</th>
+                <th class="py-4 px-6 text-center">Min Level</th>
+                <th class="py-4 px-6 text-center">Current Stock</th>
+                <th class="py-4 px-6">Supplier Info</th>
+                <th class="py-4 px-6 text-right min-w-[240px]">Actions</th>
+              </tr>
+            </thead>
+            <tbody id="inventory-tbody" class="divide-y divide-slate-100 dark:divide-slate-800/60 text-sm"></tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <section id="view-pos" class="hidden -mt-4">
+      <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
+        <div class="lg:col-span-8 space-y-5">
+          <div class="p-6 rounded-3xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 shadow-sm space-y-5">
+            <div class="relative w-full">
+              <i data-lucide="search" class="w-4.5 h-4.5 absolute left-4 top-1/2 -translate-y-1/2 text-slate-400"></i>
+              <input type="text" id="pos-search-input" placeholder="Scan or search medicine by name, barcode SKU, or category..." class="w-full pl-11 pr-4 py-3.5 rounded-2xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-sm font-semibold focus:outline-none focus:ring-2 focus:ring-emerald-500 dark:text-white placeholder-slate-400" />
+            </div>
+
+            <div id="pos-medicine-grid" class="flex flex-col gap-3.5"></div>
+          </div>
+        </div>
+
+        <div class="lg:col-span-4 sticky top-[145px] space-y-5">
+          <div class="p-5 sm:p-6 rounded-3xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 shadow-xl flex flex-col justify-between h-[calc(100vh-185px)] max-h-[calc(100vh-185px)] overflow-hidden">
+            <div class="flex items-center justify-between border-b border-slate-100 dark:border-slate-800 pb-3.5 flex-shrink-0">
+              <div class="flex items-center gap-3">
+                <div class="w-10 h-10 rounded-2xl bg-emerald-100 dark:bg-emerald-950/80 text-emerald-600 dark:text-emerald-400 flex items-center justify-center">
+                  <i data-lucide="shopping-bag" class="w-5 h-5"></i>
+                </div>
+                <div>
+                  <h3 class="font-extrabold text-base text-slate-900 dark:text-white">Active Checkout Cart</h3>
+                  <p class="text-xs text-slate-500 dark:text-slate-400">Items ready for billing</p>
+                </div>
+              </div>
+              <div class="flex items-center gap-2">
+                <span id="pos-cart-qty" class="px-3 py-1 rounded-full bg-emerald-100 dark:bg-emerald-950/80 text-emerald-800 dark:text-emerald-300 font-bold text-xs font-mono">0</span>
+                <button id="btn-toggle-pos-camera" class="px-3 py-1.5 rounded-xl border-2 border-slate-300 dark:border-emerald-500/80 bg-slate-100 dark:bg-slate-800 text-slate-800 dark:text-emerald-300 hover:bg-slate-200 dark:hover:bg-slate-700 hover:border-slate-400 dark:hover:border-emerald-400 font-bold text-xs flex items-center gap-1.5 shadow-sm transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-emerald-500/20" title="Toggle Camera Scanner">
+                  <i data-lucide="camera" class="w-4 h-4 text-emerald-400"></i>
+                  <span>Scanner</span>
+                </button>
+              </div>
+            </div>
+
+            <div id="pos-cart-items" class="space-y-3 flex-1 min-h-0 overflow-y-auto pr-1 my-3 custom-scrollbar divide-y divide-slate-100 dark:divide-slate-800/60"></div>
+
+            <div id="pos-checkout-summary" class="hidden pt-3 border-t border-slate-200 dark:border-slate-800 space-y-2 flex-shrink-0">
+              <div class="space-y-1 font-sans text-xs">
+                <div class="flex items-center justify-between text-slate-500 dark:text-slate-400 font-semibold">
+                  <span>Subtotal Amount:</span>
+                  <span id="pos-cart-subtotal" class="font-mono font-bold text-slate-700 dark:text-slate-300">Rs. 0.00</span>
+                </div>
+                <div class="flex items-center justify-between text-slate-500 dark:text-slate-400 font-semibold">
+                  <span>GST / Tax Total:</span>
+                  <span id="pos-cart-tax" class="font-mono font-bold text-amber-600 dark:text-amber-400">Rs. 0.00</span>
+                </div>
+                <div class="flex items-center justify-between pt-1.5 border-t border-slate-100 dark:border-slate-800/80 font-bold text-sm text-slate-900 dark:text-white">
+                  <span>Total Payable:</span>
+                  <span id="pos-cart-total" class="font-mono font-extrabold text-emerald-600 dark:text-emerald-400">Rs. 0.00</span>
+                </div>
+              </div>
+
+              <div class="pt-1">
+                <select id="pos-pet-link-select" class="w-full px-3 py-1.5 rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-xs font-semibold focus:outline-none focus:ring-2 focus:ring-emerald-500 dark:text-white">
+                  <option value="">Link Patient & Owner (Optional)</option>
+                </select>
+              </div>
+            </div>
+
+            <div class="pt-3 border-t border-slate-200 dark:border-slate-800 flex-shrink-0 space-y-3">
+              <div>
+                <label class="block text-[11px] font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider mb-1.5">Select Payment Method:</label>
+                <div class="grid grid-cols-3 gap-2">
+                  <button type="button" data-method="Cash" class="pos-payment-btn py-2.5 rounded-xl font-bold text-xs transition-all duration-200 hover:scale-[1.02] active:scale-[0.98] border border-emerald-600 bg-emerald-600 text-white shadow-sm">
+                    Cash PKR
+                  </button>
+                  <button type="button" data-method="Card" class="pos-payment-btn py-2.5 rounded-xl font-bold text-xs transition-all duration-200 hover:scale-[1.02] active:scale-[0.98] border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-slate-900 dark:text-slate-100">
+                    Debit/Credit
+                  </button>
+                  <button type="button" data-method="Online" class="pos-payment-btn py-2.5 rounded-xl font-bold text-xs transition-all duration-200 hover:scale-[1.02] active:scale-[0.98] border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-slate-900 dark:text-slate-100">
+                    Raast / IBFT
+                  </button>
+                </div>
+              </div>
+
+              <div>
+                <button id="btn-complete-sale" type="button" class="w-full py-3.5 rounded-2xl bg-emerald-600 hover:bg-emerald-700 text-white font-extrabold text-sm tracking-wide shadow-xl shadow-emerald-600/30 hover:scale-[1.02] active:scale-[0.98] transition-all duration-200 flex items-center justify-center gap-2">
+                  <i data-lucide="check-circle" class="w-5 h-5"></i> Complete Sale & Print Invoice
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="view-sales" class="hidden -mt-4">
+      <div class="max-w-[1550px] mx-auto px-4 sm:px-8 lg:px-16 space-y-6">
+        <div class="grid grid-cols-1 sm:grid-cols-3 gap-5">
+        <div class="p-6 rounded-3xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 shadow-sm flex items-center justify-between">
+          <div>
+            <span class="text-xs font-bold uppercase tracking-wider text-slate-400 dark:text-slate-500">Today's Revenue</span>
+            <h4 id="sales-today-revenue" class="text-2xl font-extrabold font-mono text-emerald-600 dark:text-emerald-400 mt-1">Rs. 0.00</h4>
+          </div>
+          <div class="w-12 h-12 rounded-2xl bg-emerald-100 dark:bg-emerald-950/80 text-emerald-600 dark:text-emerald-400 flex items-center justify-center">
+            <i data-lucide="trending-up" class="w-6 h-6"></i>
+          </div>
+        </div>
+
+        <div class="p-6 rounded-3xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 shadow-sm flex items-center justify-between">
+          <div>
+            <span class="text-xs font-bold uppercase tracking-wider text-slate-400 dark:text-slate-500">Today's Transactions</span>
+            <h4 id="sales-today-count" class="text-2xl font-extrabold font-mono text-indigo-600 dark:text-indigo-400 mt-1">0 Invoices</h4>
+          </div>
+          <div class="w-12 h-12 rounded-2xl bg-indigo-100 dark:bg-indigo-950/80 text-indigo-600 dark:text-indigo-400 flex items-center justify-center">
+            <i data-lucide="receipt" class="w-6 h-6"></i>
+          </div>
+        </div>
+
+        <div class="p-6 rounded-3xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 shadow-sm flex items-center justify-between">
+          <div>
+            <span class="text-xs font-bold uppercase tracking-wider text-slate-400 dark:text-slate-500">Units Sold Today</span>
+            <h4 id="sales-today-units" class="text-2xl font-extrabold font-mono text-amber-600 dark:text-amber-400 mt-1">0 Units</h4>
+          </div>
+          <div class="w-12 h-12 rounded-2xl bg-amber-100 dark:bg-amber-950/80 text-amber-600 dark:text-amber-400 flex items-center justify-center">
+            <i data-lucide="package-check" class="w-6 h-6"></i>
+          </div>
+        </div>
+      </div>
+
+      <div class="p-6 rounded-3xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 shadow-sm space-y-6">
+        <div class="flex flex-col md:flex-row items-center justify-between gap-4">
+          <div class="relative w-full md:w-96">
+            <i data-lucide="search" class="w-4 h-4 absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400"></i>
+            <input type="text" id="sales-search-input" placeholder="Search by receipt number, customer, or cashier..." class="w-full pl-10 pr-4 py-2.5 rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-xs font-semibold focus:outline-none focus:ring-2 focus:ring-emerald-500 dark:text-white placeholder-slate-400" />
+          </div>
+          <div class="text-right">
+            <span class="text-xs text-slate-500 dark:text-slate-400">Tip: Editing an item quantity automatically restores or deducts batch stock.</span>
+          </div>
+        </div>
+
+        <div class="overflow-x-auto rounded-2xl border border-slate-200 dark:border-slate-800">
+          <table class="w-full text-left border-collapse min-w-[850px]">
+            <thead>
+              <tr class="bg-slate-50 dark:bg-slate-800/80 border-b border-slate-200 dark:border-slate-800 text-[11px] font-extrabold uppercase tracking-wider text-slate-500 dark:text-slate-400">
+                <th class="py-3.5 px-6">Receipt #</th>
+                <th class="py-3.5 px-6">Date & Time</th>
+                <th class="py-3.5 px-6">Customer & Doctor</th>
+                <th class="py-3.5 px-6">Cashier Staff</th>
+                <th class="py-3.5 px-6">Payment Method</th>
+                <th class="py-3.5 px-6 text-right">Total Amount</th>
+                <th class="py-3.5 px-6 text-right">Actions</th>
+              </tr>
+            </thead>
+            <tbody id="sales-tbody" class="divide-y divide-slate-100 dark:divide-slate-800/60 text-sm"></tbody>
+          </table>
+        </div>
+      </div>
+      </div>
+    </section>
+
+    <section id="view-clients" class="hidden -mt-4">
+      <div class="max-w-[1550px] mx-auto px-4 sm:px-8 lg:px-16 space-y-6">
+        <div class="p-6 rounded-3xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 shadow-sm space-y-6">
+        <div class="flex flex-col xl:flex-row items-center justify-between gap-4">
+          <div class="relative w-full xl:w-96">
+            <i data-lucide="search" class="w-4 h-4 absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400"></i>
+            <input type="text" id="clients-search-input" placeholder="Search owners or pets by name, phone, or species..." class="w-full pl-10 pr-4 py-2.5 rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-xs font-semibold focus:outline-none focus:ring-2 focus:ring-emerald-500 dark:text-white placeholder-slate-400" />
+          </div>
+          <div class="flex flex-wrap items-center gap-3 w-full xl:w-auto justify-end">
+            <button id="btn-open-add-owner" class="px-5 py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-extrabold text-xs shadow-lg shadow-emerald-600/20 transition-all flex items-center gap-2">
+              <i data-lucide="user-plus" class="w-4 h-4"></i> Register Owner
+            </button>
+            <button id="btn-open-add-pet" class="px-5 py-2.5 rounded-xl bg-slate-900 hover:bg-slate-800 dark:bg-slate-800 dark:hover:bg-slate-700 text-white font-extrabold text-xs shadow-lg transition-all flex items-center gap-2">
+              <i data-lucide="paw-print" class="w-4 h-4 text-emerald-400"></i> Register Pet
+            </button>
+            <span class="text-xs text-slate-500 dark:text-slate-400 font-medium ml-2 whitespace-nowrap">Total Registered Clients: <strong id="clients-total-count" class="text-emerald-600 dark:text-emerald-400">0</strong></span>
+          </div>
+        </div>
+
+        <div id="clients-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"></div>
+      </div>
+      </div>
+    </section>
+
+    <section id="view-reports" class="hidden -mt-4">
+      <div class="max-w-[1550px] mx-auto px-4 sm:px-8 lg:px-16 space-y-6">
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
+        <div class="p-6 rounded-3xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 shadow-sm space-y-3">
+          <span class="text-xs font-bold uppercase tracking-wider text-slate-400 dark:text-slate-500">Gross Revenue (<span id="reports-month-label">July 2026</span>)</span>
+          <h4 id="report-kpi-revenue" class="text-3xl font-extrabold font-mono text-slate-900 dark:text-white">Rs. 0.00</h4>
+          <span class="text-xs font-semibold text-emerald-600 dark:text-emerald-400 inline-block">Total billed turnover</span>
+        </div>
+
+        <div class="p-6 rounded-3xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 shadow-sm space-y-3">
+          <span class="text-xs font-bold uppercase tracking-wider text-slate-400 dark:text-slate-500">Net Profit Margin</span>
+          <h4 id="report-kpi-profit" class="text-3xl font-extrabold font-mono text-emerald-600 dark:text-emerald-400">Rs. 0.00</h4>
+          <span class="text-xs font-semibold text-slate-500 dark:text-slate-400 inline-block">Revenue minus purchase cost</span>
+        </div>
+
+        <div class="p-6 rounded-3xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 shadow-sm space-y-3">
+          <span class="text-xs font-bold uppercase tracking-wider text-slate-400 dark:text-slate-500">Total Units Sold</span>
+          <h4 id="report-kpi-qty" class="text-3xl font-extrabold font-mono text-indigo-600 dark:text-indigo-400">0 units</h4>
+          <span class="text-xs font-semibold text-slate-500 dark:text-slate-400 inline-block">Medicine volume dispensed</span>
+        </div>
+
+        <div class="p-6 rounded-3xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 shadow-sm space-y-3">
+          <span class="text-xs font-bold uppercase tracking-wider text-slate-400 dark:text-slate-500">Stock Write-offs / Expired</span>
+          <h4 id="report-kpi-loss" class="text-3xl font-extrabold font-mono text-red-600 dark:text-red-400">Rs. 0.00</h4>
+          <span class="text-xs font-semibold text-red-600 dark:text-red-400 inline-block">Expired or damaged stock loss</span>
+        </div>
+      </div>
+
+      <div class="p-6 rounded-3xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 shadow-sm space-y-4">
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+          <h3 class="font-extrabold text-base text-slate-900 dark:text-white">Revenue vs. Net Profit (Monthly Comparison)</h3>
+          <div class="flex flex-wrap items-center gap-3">
+            <label class="text-xs font-bold text-slate-500 dark:text-slate-400 whitespace-nowrap">Accounting Period:</label>
+            <select id="reports-month-filter" class="px-4 py-2 rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-xs font-bold text-slate-800 dark:text-slate-200 shadow-sm focus:outline-none focus:ring-2 focus:ring-emerald-500">
+              <option value="2026-07">July 2026 (Current)</option>
+              <option value="2026-06">June 2026</option>
+              <option value="2026-05">May 2026</option>
+              <option value="ALL">All Time Historical</option>
+            </select>
+            <span class="text-xs font-mono font-bold text-slate-400 whitespace-nowrap ml-1">Values in PKR (Rs.)</span>
+          </div>
+        </div>
+        <div class="h-80 w-full">
+          <canvas id="financialChartCanvas"></canvas>
+        </div>
+      </div>
+
+      <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        <div class="p-6 rounded-3xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 shadow-sm space-y-4">
+          <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+            <div>
+              <h3 class="font-extrabold text-base text-slate-900 dark:text-white">Sales Distribution by Category</h3>
+              <p class="text-xs text-slate-500 dark:text-slate-400">Turnover share across clinical & inventory categories</p>
+            </div>
+          </div>
+          <div class="h-80 w-full flex items-center justify-center">
+            <canvas id="categoryChartCanvas"></canvas>
+          </div>
+        </div>
+
+        <div class="p-6 rounded-3xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 shadow-sm space-y-4">
+          <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+            <div>
+              <h3 class="font-extrabold text-base text-slate-900 dark:text-white">Payment Method Breakdown</h3>
+              <p class="text-xs text-slate-500 dark:text-slate-400">Cash vs card vs mobile payment volume</p>
+            </div>
+          </div>
+          <div class="h-80 w-full flex items-center justify-center">
+            <canvas id="paymentChartCanvas"></canvas>
+          </div>
+        </div>
+      </div>
+
+      <div class="p-6 rounded-3xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 shadow-sm space-y-4">
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+          <div>
+            <h3 class="font-extrabold text-base text-slate-900 dark:text-white">Detailed Transaction & Audit Ledger</h3>
+            <p class="text-xs text-slate-500 dark:text-slate-400">Complete breakdown of all sales invoices, prescription verify checkouts, and stock adjustments</p>
+          </div>
+          <div class="flex items-center gap-2.5 flex-wrap">
+            <input type="text" id="reports-ledger-search" placeholder="Search receipt, customer, method..." class="px-3.5 py-1.5 rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-xs font-semibold text-slate-800 dark:text-slate-200 focus:outline-none focus:ring-2 focus:ring-emerald-500 w-48 sm:w-64" />
+            <input type="date" id="reports-ledger-date" class="px-3 py-1.5 rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-xs font-semibold text-slate-800 dark:text-slate-200 focus:outline-none focus:ring-2 focus:ring-emerald-500" />
+            <button type="button" onclick="document.getElementById('reports-ledger-search').value=''; document.getElementById('reports-ledger-date').value=''; if(typeof renderReports === 'function') renderReports();" class="px-2.5 py-1.5 rounded-xl bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-600 dark:text-slate-300 text-xs font-bold">Clear</button>
+          </div>
+        </div>
+        <div class="overflow-x-auto rounded-2xl border border-slate-200 dark:border-slate-800">
+          <table class="w-full text-left border-collapse min-w-[750px]">
+            <thead>
+              <tr class="bg-slate-50 dark:bg-slate-800/80 border-b border-slate-200 dark:border-slate-800 text-[11px] font-extrabold uppercase tracking-wider text-slate-500 dark:text-slate-400">
+                <th class="py-3.5 px-6">Reference ID</th>
+                <th class="py-3.5 px-6">Date & Time</th>
+                <th class="py-3.5 px-6">Customer / Reason</th>
+                <th class="py-3.5 px-6">Method</th>
+                <th class="py-3.5 px-6 text-right">Gross Amount</th>
+                <th class="py-3.5 px-6 text-right">Net Profit / Loss</th>
+                <th class="py-3.5 px-6 text-right">Actions</th>
+              </tr>
+            </thead>
+            <tbody id="reports-ledger-tbody" class="divide-y divide-slate-100 dark:divide-slate-800/60 text-sm"></tbody>
+          </table>
+        </div>
+      </div>
+
+      <div class="p-6 rounded-3xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 shadow-sm space-y-4">
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+          <div>
+            <h3 class="font-extrabold text-base text-slate-900 dark:text-white flex items-center gap-2">
+              <i data-lucide="shield-alert" class="w-5 h-5 text-indigo-500"></i> Admin Audit Trail & Sensitive Action Log
+            </h3>
+            <p class="text-xs text-slate-500 dark:text-slate-400">Chronological timeline of system actions, deletions, checkouts, and staff activity</p>
+          </div>
+          <div class="flex items-center gap-2.5 flex-wrap">
+            <input type="text" id="audit-trail-search" placeholder="Search user, action, target..." class="px-3.5 py-1.5 rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-xs font-semibold text-slate-800 dark:text-slate-200 focus:outline-none focus:ring-2 focus:ring-indigo-500 w-44 sm:w-56" />
+            <input type="date" id="audit-trail-date" class="px-3 py-1.5 rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-xs font-semibold text-slate-800 dark:text-slate-200 focus:outline-none focus:ring-2 focus:ring-indigo-500" />
+            <select id="audit-filter-role" class="px-3 py-1.5 rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-xs font-bold text-slate-700 dark:text-slate-300">
+              <option value="ALL">All Roles</option>
+              <option value="Admin">Admin Only</option>
+              <option value="Cashier">Cashier Only</option>
+            </select>
+            <button type="button" onclick="document.getElementById('audit-trail-search').value=''; document.getElementById('audit-trail-date').value=''; document.getElementById('audit-filter-role').value='ALL'; if(typeof renderAuditTrail === 'function') renderAuditTrail();" class="px-2.5 py-1.5 rounded-xl bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-600 dark:text-slate-300 text-xs font-bold">Clear</button>
+          </div>
+        </div>
+
+        <div class="overflow-x-auto rounded-2xl border border-slate-200 dark:border-slate-800">
+          <table class="w-full text-left border-collapse min-w-[750px]">
+            <thead>
+              <tr class="bg-slate-50 dark:bg-slate-800/80 border-b border-slate-200 dark:border-slate-800 text-[11px] font-extrabold uppercase tracking-wider text-slate-500 dark:text-slate-400">
+                <th class="py-3.5 px-6">Log ID</th>
+                <th class="py-3.5 px-6">Timestamp</th>
+                <th class="py-3.5 px-6">User / Staff</th>
+                <th class="py-3.5 px-6">Role</th>
+                <th class="py-3.5 px-6">Action Type</th>
+                <th class="py-3.5 px-6">Description</th>
+              </tr>
+            </thead>
+            <tbody id="audit-trail-tbody" class="divide-y divide-slate-100 dark:divide-slate-800/60 text-sm"></tbody>
+          </table>
+        </div>
+      </div>
+      </div>
+    </section>
+
+    <section id="view-admin" class="hidden -mt-4">
+      <div class="max-w-[1550px] mx-auto px-4 sm:px-8 lg:px-16 space-y-6">
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+        <div class="bg-white dark:bg-slate-900 rounded-3xl p-6 border border-slate-200 dark:border-slate-800 shadow-xl space-y-6 flex flex-col justify-between">
+          <div class="space-y-4">
+            <div class="flex items-center justify-between border-b border-slate-100 dark:border-slate-800 pb-4">
+              <div class="flex items-center gap-3">
+                <div class="w-11 h-11 rounded-2xl bg-emerald-100 dark:bg-emerald-950/80 text-emerald-600 dark:text-emerald-400 flex items-center justify-center flex-shrink-0">
+                  <i data-lucide="users" class="w-5 h-5"></i>
+                </div>
+                <div>
+                  <h3 class="font-extrabold text-base text-slate-900 dark:text-white">System Users</h3>
+                  <p class="text-xs text-slate-500 dark:text-slate-400">Cashier accounts and Admin administrators</p>
+                </div>
+              </div>
+              <button type="button" onclick="document.getElementById('modal-add-cashier')?.classList.remove('hidden')" class="px-3.5 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs flex items-center gap-1.5 shadow-sm transition-all">
+                <i data-lucide="user-plus" class="w-4 h-4"></i>
+                <span>Add User</span>
+              </button>
+            </div>
+            <div class="overflow-x-auto">
+              <table class="w-full text-left border-collapse">
+                <thead>
+                  <tr class="border-b border-slate-100 dark:border-slate-800 text-[11px] font-extrabold text-slate-400 uppercase tracking-wider">
+                    <th class="py-3 px-3">User</th>
+                    <th class="py-3 px-3">Role</th>
+                    <th class="py-3 px-3 text-right">Actions</th>
+                  </tr>
+                </thead>
+                <tbody id="admin-users-tbody" class="divide-y divide-slate-100 dark:divide-slate-800/60 text-xs"></tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+
+        <div class="bg-white dark:bg-slate-900 rounded-3xl p-6 border border-slate-200 dark:border-slate-800 shadow-xl space-y-6 flex flex-col justify-between">
+          <div class="space-y-4">
+            <div class="flex items-center justify-between border-b border-slate-100 dark:border-slate-800 pb-4">
+              <div class="flex items-center gap-3">
+                <div class="w-11 h-11 rounded-2xl bg-indigo-100 dark:bg-indigo-950/80 text-indigo-600 dark:text-indigo-400 flex items-center justify-center flex-shrink-0">
+                  <i data-lucide="stethoscope" class="w-5 h-5"></i>
+                </div>
+                <div>
+                  <h3 class="font-extrabold text-base text-slate-900 dark:text-white">Veterinarian Doctors</h3>
+                  <p class="text-xs text-slate-500 dark:text-slate-400">Authorized practitioners for DRAP prescriptions</p>
+                </div>
+              </div>
+              <button type="button" onclick="document.getElementById('modal-admin-add-vet')?.classList.remove('hidden')" class="px-3.5 py-2 rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white font-bold text-xs flex items-center gap-1.5 shadow-sm transition-all">
+                <i data-lucide="plus" class="w-4 h-4"></i>
+                <span>Add Vet</span>
+              </button>
+            </div>
+            <div class="overflow-x-auto">
+              <table class="w-full text-left border-collapse">
+                <thead>
+                  <tr class="border-b border-slate-100 dark:border-slate-800 text-[11px] font-extrabold text-slate-400 uppercase tracking-wider">
+                    <th class="py-3 px-3">Doctor Name</th>
+                    <th class="py-3 px-3">Added</th>
+                    <th class="py-3 px-3 text-right">Actions</th>
+                  </tr>
+                </thead>
+                <tbody id="admin-vets-tbody" class="divide-y divide-slate-100 dark:divide-slate-800/60 text-xs"></tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+
+        <div class="bg-white dark:bg-slate-900 rounded-3xl p-6 border border-slate-200 dark:border-slate-800 shadow-xl space-y-6 flex flex-col justify-between">
+          <div class="space-y-4">
+            <div class="flex items-center justify-between border-b border-slate-100 dark:border-slate-800 pb-4">
+              <div class="flex items-center gap-3">
+                <div class="w-11 h-11 rounded-2xl bg-amber-100 dark:bg-amber-950/80 text-amber-600 dark:text-amber-400 flex items-center justify-center flex-shrink-0">
+                  <i data-lucide="truck" class="w-5 h-5"></i>
+                </div>
+                <div>
+                  <h3 class="font-extrabold text-base text-slate-900 dark:text-white">Pharma Suppliers</h3>
+                  <p class="text-xs text-slate-500 dark:text-slate-400">Authorized distributors for batch orders</p>
+                </div>
+              </div>
+              <button type="button" onclick="document.getElementById('modal-add-supplier')?.classList.remove('hidden')" class="px-3.5 py-2 rounded-xl bg-amber-600 hover:bg-amber-700 text-white font-bold text-xs flex items-center gap-1.5 shadow-sm transition-all">
+                <i data-lucide="plus" class="w-4 h-4"></i>
+                <span>Add Supplier</span>
+              </button>
+            </div>
+            <div class="overflow-x-auto">
+              <table class="w-full text-left border-collapse">
+                <thead>
+                  <tr class="border-b border-slate-100 dark:border-slate-800 text-[11px] font-extrabold text-slate-400 uppercase tracking-wider">
+                    <th class="py-3 px-3">Supplier Name</th>
+                    <th class="py-3 px-3 text-right">Actions</th>
+                  </tr>
+                </thead>
+                <tbody id="admin-suppliers-tbody" class="divide-y divide-slate-100 dark:divide-slate-800/60 text-xs"></tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
+      </div>
+    </section>
+
+  </main>
+  </div>
+
+  <div id="modal-add-cashier" class="fixed inset-0 z-50 bg-slate-950/80 backdrop-blur-sm hidden flex items-center justify-center p-4">
+    <div class="bg-white dark:bg-slate-900 rounded-3xl max-w-md w-full p-6 border border-slate-200 dark:border-slate-800 shadow-2xl space-y-4">
+      <div class="flex items-center justify-between border-b border-slate-100 dark:border-slate-800 pb-3">
+        <div class="flex items-center gap-2.5">
+          <div class="w-10 h-10 rounded-2xl bg-emerald-100 dark:bg-emerald-950/80 text-emerald-600 dark:text-emerald-400 flex items-center justify-center">
+            <i data-lucide="user-plus" class="w-5 h-5"></i>
+          </div>
+          <div>
+            <h3 class="font-extrabold text-base text-slate-900 dark:text-white">Register System User</h3>
+            <p class="text-xs text-slate-500 dark:text-slate-400">Grant POS access or Admin privileges</p>
+          </div>
+        </div>
+        <button onclick="document.getElementById('modal-add-cashier')?.classList.add('hidden')" class="text-slate-400 hover:text-slate-700 dark:hover:text-white"><i data-lucide="x" class="w-5 h-5"></i></button>
+      </div>
+
+      <form id="form-add-cashier" class="space-y-4">
+        <div>
+          <label class="block text-xs font-bold text-slate-600 dark:text-slate-300 mb-1.5 uppercase">Account Role / Access Level</label>
+          <select id="new-cashier-role" class="w-full px-4 py-2.5 rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-xs font-bold text-slate-800 dark:text-slate-200 focus:outline-none focus:ring-2 focus:ring-emerald-500">
+            <option value="Cashier">Cashier (POS & Register Access)</option>
+            <option value="Admin">Admin (Full System & Reports Access)</option>
+          </select>
+        </div>
+        <div>
+          <label class="block text-xs font-bold text-slate-600 dark:text-slate-300 mb-1.5 uppercase">Staff Full Name</label>
+          <input type="text" id="new-cashier-name" placeholder="e.g. Demo Staff Name" class="w-full px-4 py-2.5 rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-xs font-semibold focus:outline-none focus:ring-2 focus:ring-emerald-500 dark:text-white" required />
+        </div>
+        <div>
+          <label class="block text-xs font-bold text-slate-600 dark:text-slate-300 mb-1.5 uppercase">Email / Staff ID</label>
+          <input type="email" id="new-cashier-email" placeholder="staff@vetstore.com" class="w-full px-4 py-2.5 rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-xs font-semibold focus:outline-none focus:ring-2 focus:ring-emerald-500 dark:text-white" required />
+        </div>
+        <div>
+          <label class="block text-xs font-bold text-slate-600 dark:text-slate-300 mb-1.5 uppercase">Account Password</label>
+          <input type="password" id="new-cashier-password" placeholder="••••••••" class="w-full px-4 py-2.5 rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-xs font-semibold focus:outline-none focus:ring-2 focus:ring-emerald-500 dark:text-white" required />
+        </div>
+        <div class="flex items-center justify-end gap-2 pt-2">
+          <button type="button" onclick="document.getElementById('modal-add-cashier')?.classList.add('hidden')" class="px-4 py-2 rounded-xl border border-slate-200 dark:border-slate-700 font-bold text-xs">Cancel</button>
+          <button type="submit" class="px-5 py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs shadow-md shadow-emerald-600/20">Create Cashier Account</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <div id="modal-admin-add-vet" class="fixed inset-0 z-50 bg-slate-950/80 backdrop-blur-sm hidden flex items-center justify-center p-4">
+    <div class="bg-white dark:bg-slate-900 rounded-3xl max-w-md w-full p-6 border border-slate-200 dark:border-slate-800 shadow-2xl space-y-4">
+      <div class="flex items-center justify-between border-b border-slate-100 dark:border-slate-800 pb-3">
+        <h3 class="font-extrabold text-base text-slate-900 dark:text-white">Add Veterinarian Doctor</h3>
+        <button type="button" onclick="document.getElementById('modal-admin-add-vet')?.classList.add('hidden')" class="text-slate-400 hover:text-slate-700 dark:hover:text-white"><i data-lucide="x" class="w-5 h-5"></i></button>
+      </div>
+      <form id="form-admin-add-vet" class="space-y-4">
+        <div>
+          <label class="block text-xs font-bold text-slate-600 dark:text-slate-300 mb-1.5 uppercase">Doctor Full Name & Designation</label>
+          <input type="text" id="admin-new-vet-name" placeholder="e.g. Dr. Hammad Ali (Surgeon)" class="w-full px-4 py-2.5 rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-xs font-semibold focus:outline-none focus:ring-2 focus:ring-indigo-500 dark:text-white" required />
+        </div>
+        <div class="flex items-center justify-end gap-2 pt-2">
+          <button type="button" onclick="document.getElementById('modal-admin-add-vet')?.classList.add('hidden')" class="px-4 py-2 rounded-xl border border-slate-200 dark:border-slate-700 font-bold text-xs">Cancel</button>
+          <button type="submit" class="px-5 py-2 rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white font-bold text-xs shadow-sm">Save Doctor</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <div id="modal-scanner" class="fixed inset-0 z-[100] bg-slate-950/80 backdrop-blur-sm hidden flex items-center justify-center p-4">
+    <div class="bg-white dark:bg-slate-900 rounded-3xl max-w-md w-full p-6 border border-slate-200 dark:border-slate-800 shadow-2xl space-y-4">
+      <div class="flex items-center justify-between">
+        <h3 class="font-extrabold text-base text-slate-900 dark:text-white flex items-center gap-2">
+          <i data-lucide="camera" class="w-5 h-5 text-emerald-500"></i> Universal Barcode & QR Scanner
+        </h3>
+        <button id="btn-close-scanner" class="text-slate-400 hover:text-slate-600 dark:hover:text-white">
+          <i data-lucide="x" class="w-5 h-5"></i>
+        </button>
+      </div>
+      <div id="qr-reader" class="rounded-2xl overflow-hidden bg-black min-h-[260px]"></div>
+      <p class="text-center text-xs text-slate-500 dark:text-slate-400">Point device camera towards medicine barcode or batch QR code.</p>
+    </div>
+  </div>
+
+  <div id="pos-camera-container" class="fixed inset-0 z-[100] bg-slate-950/80 backdrop-blur-sm hidden flex items-center justify-center p-4">
+    <div class="bg-white dark:bg-slate-900 rounded-3xl max-w-md w-full p-6 border border-slate-200 dark:border-slate-800 shadow-2xl space-y-4">
+      <div class="flex items-center justify-between">
+        <h3 class="font-extrabold text-base text-slate-900 dark:text-white flex items-center gap-2">
+          <i data-lucide="camera" class="w-5 h-5 text-emerald-500"></i> POS Barcode Scanner
+        </h3>
+        <button onclick="togglePosCamera()" class="text-slate-400 hover:text-slate-600 dark:hover:text-white">
+          <i data-lucide="x" class="w-5 h-5"></i>
+        </button>
+      </div>
+      <div id="pos-qr-reader" class="rounded-2xl overflow-hidden bg-black min-h-[260px]"></div>
+      <p class="text-center text-xs text-slate-500 dark:text-slate-400">Point device camera towards medicine barcode or SKU to add directly to cart.</p>
+    </div>
+  </div>
+
+  <div id="modal-add-product" class="fixed inset-0 z-50 bg-slate-950/80 backdrop-blur-sm hidden flex items-center justify-center p-4">
+    <div class="bg-white dark:bg-slate-900 rounded-3xl max-w-2xl w-full p-6 border border-slate-200 dark:border-slate-800 shadow-2xl flex flex-col max-h-[85vh] overflow-hidden">
+      <div class="flex items-center justify-between border-b border-slate-100 dark:border-slate-800 pb-4 flex-shrink-0">
+        <div>
+          <h3 class="font-extrabold text-lg text-slate-900 dark:text-white">Register New Medicine SKU</h3>
+          <p class="text-xs text-slate-500 dark:text-slate-400">Add veterinary drug to Veterinary Store catalog with GST tax rate</p>
+        </div>
+        <button class="btn-close-modal text-slate-400 hover:text-slate-600 dark:hover:text-white">
+          <i data-lucide="x" class="w-5 h-5"></i>
+        </button>
+      </div>
+
+      <form id="form-add-product" class="space-y-4 overflow-y-auto pr-2 flex-1 py-2 custom-scrollbar">
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          <div>
+            <label class="block text-xs font-bold text-slate-600 dark:text-slate-300 mb-1.5 uppercase">Medicine Name</label>
+            <input type="text" id="prod-name" placeholder="e.g. Amoxicillin 500mg" class="w-full px-4 py-2.5 rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-xs font-semibold focus:outline-none focus:ring-2 focus:ring-emerald-500 dark:text-white" required />
+          </div>
+          <div>
+            <label class="block text-xs font-bold text-slate-600 dark:text-slate-300 mb-1.5 uppercase">Barcode SKU</label>
+            <div class="flex items-center gap-2">
+              <input type="text" id="prod-barcode" placeholder="8901112223340" class="w-full px-4 py-2.5 rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-xs font-mono font-semibold focus:outline-none focus:ring-2 focus:ring-emerald-500 dark:text-white" required />
+              <button type="button" id="btn-scan-sku" onclick="openUniversalScanner()" class="px-3.5 py-2.5 rounded-xl border-2 border-slate-300 dark:border-emerald-500/80 bg-slate-100 dark:bg-slate-800 text-slate-800 dark:text-emerald-300 hover:bg-slate-200 dark:hover:bg-slate-700 hover:border-slate-400 dark:hover:border-emerald-400 font-bold text-xs flex items-center gap-1.5 transition-all duration-200 flex-shrink-0 shadow-sm focus:outline-none focus:ring-2 focus:ring-emerald-500/20" title="Scan Barcode with Camera">
+                <i data-lucide="camera" class="w-4 h-4"></i>
+                <span>Scan</span>
+              </button>
+            </div>
+          </div>
+          <div>
+            <label class="block text-xs font-bold text-slate-600 dark:text-slate-300 mb-1.5 uppercase">Category</label>
+            <select id="prod-category" class="w-full px-4 py-2.5 rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-xs font-bold focus:outline-none focus:ring-2 focus:ring-emerald-500 dark:text-white">
+              <option value="Antibiotics">Antibiotics</option>
+              <option value="Antiparasitic">Antiparasitic</option>
+              <option value="Pain Management">Pain Management</option>
+              <option value="Vaccines">Vaccines</option>
+              <option value="Supplements">Supplements</option>
+              <option value="Dermatological">Dermatological</option>
+            </select>
+          </div>
+          <div>
+            <label class="block text-xs font-bold text-slate-600 dark:text-slate-300 mb-1.5 uppercase">Dispensing Unit</label>
+            <select id="prod-unit" class="w-full px-4 py-2.5 rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-xs font-bold focus:outline-none focus:ring-2 focus:ring-emerald-500 dark:text-white">
+              <option value="Blister Pack">Blister Pack</option>
+              <option value="Unit Dose">Unit Dose (Single Tablet / Pill)</option>
+              <option value="Vial">Vial</option>
+              <option value="Bottle">Bottle</option>
+              <option value="Can">Can</option>
+              <option value="Pack">Pack</option>
+            </select>
+          </div>
+          <div>
+            <label class="block text-xs font-bold text-slate-600 dark:text-slate-300 mb-1.5 uppercase">Tablets / Doses per Pack</label>
+            <input type="number" id="prod-pack-size" value="10" min="1" placeholder="e.g. 10 for blister pack, 1 for vial" class="w-full px-4 py-2.5 rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-xs font-bold focus:outline-none focus:ring-2 focus:ring-emerald-500 dark:text-white" required />
+          </div>
+          <div>
+            <label class="block text-xs font-bold text-slate-600 dark:text-slate-300 mb-1.5 uppercase">Min Stock Threshold</label>
+            <input type="number" id="prod-min-stock" value="15" min="1" class="w-full px-4 py-2.5 rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-xs font-semibold focus:outline-none focus:ring-2 focus:ring-emerald-500 dark:text-white" required />
+          </div>
+          <div>
+            <label class="block text-xs font-bold text-slate-600 dark:text-slate-300 mb-1.5 uppercase">GST / Tax Rate (%)</label>
+            <input type="number" id="prod-tax-rate" value="18" min="0" max="100" step="0.5" placeholder="e.g. 18 or 0 for exempt" class="w-full px-4 py-2.5 rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-xs font-mono font-bold text-amber-600 dark:text-amber-400 focus:outline-none focus:ring-2 focus:ring-emerald-500" required />
+          </div>
+          <div class="sm:col-span-2">
+            <div class="flex items-center justify-between mb-1.5">
+              <label class="block text-xs font-bold text-slate-600 dark:text-slate-300 uppercase">Prescribing Vet Doctor</label>
+            </div>
+            <select id="prod-vet-doctor" class="w-full px-4 py-2.5 rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-xs font-bold focus:outline-none focus:ring-2 focus:ring-emerald-500 dark:text-white"></select>
+          </div>
+        </div>
+
+        <div class="flex items-center gap-3 py-2">
+          <input type="checkbox" id="prod-requires-rx" class="w-4 h-4 rounded text-emerald-600 focus:ring-emerald-500" />
+          <label for="prod-requires-rx" class="text-xs font-bold text-slate-700 dark:text-slate-300">Requires Veterinarian Prescription (DRAP Controlled Schedule)</label>
+        </div>
+
+        <div>
+          <label class="block text-xs font-bold text-slate-600 dark:text-slate-300 mb-1.5 uppercase">Clinical Description</label>
+          <textarea id="prod-description" rows="2" placeholder="Indications, dosage, and target species..." class="w-full px-4 py-2.5 rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-xs font-semibold focus:outline-none focus:ring-2 focus:ring-emerald-500 dark:text-white"></textarea>
+        </div>
+
+        <div>
+          <label class="block text-xs font-bold text-slate-600 dark:text-slate-300 mb-1.5 uppercase">Medicine Image</label>
+          <input type="file" id="prod-image-file" accept="image/*" class="w-full px-3 py-2 rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-xs text-slate-500 file:mr-4 file:py-1.5 file:px-3 file:rounded-lg file:border-0 file:text-xs file:font-semibold file:bg-emerald-50 file:text-emerald-700 hover:file:bg-emerald-100" />
+          <span id="compression-status-text" class="block text-[11px] font-mono font-semibold text-emerald-600 dark:text-emerald-400 mt-1"></span>
+        </div>
+
+        <div class="pt-4 flex items-center justify-end gap-3 border-t border-slate-100 dark:border-slate-800 flex-shrink-0">
+          <button type="button" class="btn-close-modal px-5 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 font-bold text-xs hover:bg-slate-50 dark:hover:bg-slate-800">Cancel</button>
+          <button type="submit" class="px-6 py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs shadow-lg shadow-emerald-600/20">Save Medicine SKU</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <div id="modal-add-batch" class="fixed inset-0 z-50 bg-slate-950/80 backdrop-blur-sm hidden flex items-center justify-center p-4">
+    <div class="bg-white dark:bg-slate-900 rounded-3xl max-w-lg w-full p-6 border border-slate-200 dark:border-slate-800 shadow-2xl flex flex-col max-h-[85vh] overflow-hidden">
+      <div class="flex items-center justify-between border-b border-slate-100 dark:border-slate-800 pb-4 flex-shrink-0">
+        <div>
+          <h3 class="font-extrabold text-lg text-slate-900 dark:text-white">Receive Stock Batch</h3>
+          <p class="text-xs text-slate-500 dark:text-slate-400">Log new inventory reception with supplier and expiry date</p>
+        </div>
+        <button class="btn-close-modal text-slate-400 hover:text-slate-600 dark:hover:text-white">
+          <i data-lucide="x" class="w-5 h-5"></i>
+        </button>
+      </div>
+
+      <form id="form-add-batch" class="space-y-4">
+        <div>
+          <label class="block text-xs font-bold text-slate-600 dark:text-slate-300 mb-1.5 uppercase">Select Medicine Product</label>
+          <select id="batch-product-id" class="w-full px-4 py-2.5 rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-xs font-bold focus:outline-none focus:ring-2 focus:ring-indigo-500 dark:text-white"></select>
+        </div>
+        <div class="grid grid-cols-2 gap-4">
+          <div>
+            <label class="block text-xs font-bold text-slate-600 dark:text-slate-300 mb-1.5 uppercase">Batch Number</label>
+            <input type="text" id="batch-number" class="w-full px-4 py-2.5 rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-xs font-mono font-semibold focus:outline-none focus:ring-2 focus:ring-indigo-500 dark:text-white" required />
+          </div>
+          <div>
+            <label class="block text-xs font-bold text-slate-600 dark:text-slate-300 mb-1.5 uppercase">Quantity Received</label>
+            <input type="number" id="batch-quantity" value="50" min="1" class="w-full px-4 py-2.5 rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-xs font-mono font-semibold focus:outline-none focus:ring-2 focus:ring-indigo-500 dark:text-white" required />
+          </div>
+          <div>
+            <label class="block text-xs font-bold text-slate-600 dark:text-slate-300 mb-1.5 uppercase">Purchase Price (Rs.)</label>
+            <input type="number" id="batch-purchase-price" step="0.01" class="w-full px-4 py-2.5 rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-xs font-mono font-semibold focus:outline-none focus:ring-2 focus:ring-indigo-500 dark:text-white" required />
+          </div>
+          <div>
+            <label class="block text-xs font-bold text-slate-600 dark:text-slate-300 mb-1.5 uppercase">Selling Price (Rs.)</label>
+            <input type="number" id="batch-selling-price" step="0.01" class="w-full px-4 py-2.5 rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-xs font-mono font-semibold focus:outline-none focus:ring-2 focus:ring-indigo-500 dark:text-white" required />
+          </div>
+        </div>
+        <div>
+          <div class="flex items-center justify-between mb-1.5">
+            <label class="block text-xs font-bold text-slate-600 dark:text-slate-300 uppercase">Supplier / Distributor</label>
+            <button type="button" id="btn-open-add-supplier" class="text-[11px] font-bold text-indigo-600 dark:text-indigo-400 hover:underline flex items-center gap-1">+ Add Supplier</button>
+          </div>
+          <select id="batch-supplier" class="w-full px-4 py-2.5 rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-xs font-bold focus:outline-none focus:ring-2 focus:ring-indigo-500 dark:text-white"></select>
+        </div>
+        <div>
+          <label class="block text-xs font-bold text-slate-600 dark:text-slate-300 mb-1.5 uppercase">Expiry Date</label>
+          <input type="date" id="batch-expiry-date" class="w-full px-4 py-2.5 rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-xs font-semibold focus:outline-none focus:ring-2 focus:ring-indigo-500 dark:text-white" required />
+        </div>
+
+        <div class="pt-4 flex items-center justify-end gap-3 border-t border-slate-100 dark:border-slate-800 flex-shrink-0">
+          <button type="button" class="btn-close-modal px-5 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 font-bold text-xs hover:bg-slate-50 dark:hover:bg-slate-800">Cancel</button>
+          <button type="submit" class="px-6 py-2.5 rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white font-bold text-xs shadow-lg shadow-indigo-600/20">Confirm Stock Reception</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <div id="modal-add-supplier" class="fixed inset-0 z-50 bg-slate-950/80 backdrop-blur-sm hidden flex items-center justify-center p-4">
+    <div class="bg-white dark:bg-slate-900 rounded-3xl max-w-md w-full p-6 border border-slate-200 dark:border-slate-800 shadow-2xl space-y-4">
+      <div class="flex items-center justify-between border-b border-slate-100 dark:border-slate-800 pb-3">
+        <h3 class="font-extrabold text-base text-slate-900 dark:text-white">Add New Supplier</h3>
+        <button type="button" onclick="document.getElementById('modal-add-supplier')?.classList.add('hidden')" class="text-slate-400 hover:text-slate-700 dark:hover:text-white"><i data-lucide="x" class="w-5 h-5"></i></button>
+      </div>
+      <form id="form-add-supplier" class="space-y-4">
+        <div>
+          <label class="block text-xs font-bold text-slate-600 dark:text-slate-300 mb-1.5 uppercase">Supplier Name & City</label>
+          <input type="text" id="new-supplier-name" placeholder="e.g. Rawal Vet Pharma (Rawalpindi)" class="w-full px-4 py-2.5 rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-xs font-semibold focus:outline-none focus:ring-2 focus:ring-indigo-500 dark:text-white" required />
+        </div>
+        <div class="flex items-center justify-end gap-2 pt-2">
+          <button type="button" onclick="document.getElementById('modal-add-supplier')?.classList.add('hidden')" class="px-4 py-2 rounded-xl border border-slate-200 dark:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-800 font-bold text-xs">Cancel</button>
+          <button type="submit" class="px-5 py-2 rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white font-bold text-xs shadow-sm">Save Supplier</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <div id="modal-select-edit-inventory" class="fixed inset-0 z-50 bg-slate-950/80 backdrop-blur-sm hidden flex items-center justify-center p-4">
+    <div class="bg-white dark:bg-slate-900 rounded-3xl max-w-lg w-full p-6 border border-slate-200 dark:border-slate-800 shadow-2xl flex flex-col space-y-4">
+      <div class="flex items-center justify-between border-b border-slate-100 dark:border-slate-800 pb-4 flex-shrink-0">
+        <div>
+          <h3 class="font-extrabold text-lg text-slate-900 dark:text-white">Select Medicine to Edit</h3>
+          <p class="text-xs text-slate-500 dark:text-slate-400">Choose any product from catalog to modify SKU details, taxes, and batch stock</p>
+        </div>
+        <button onclick="closeSelectEditModal()" class="text-slate-400 hover:text-slate-600 dark:hover:text-white">
+          <i data-lucide="x" class="w-5 h-5"></i>
+        </button>
+      </div>
+      <div class="space-y-4">
+        <div>
+          <label class="block text-xs font-bold text-slate-600 dark:text-slate-300 mb-1.5 uppercase">Search or Select Medicine Product</label>
+          <select id="select-edit-product-dropdown" class="w-full px-4 py-3 rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-xs font-bold text-slate-800 dark:text-slate-200 focus:outline-none focus:ring-2 focus:ring-amber-500"></select>
+        </div>
+        <div class="flex items-center justify-end gap-3 pt-2">
+          <button type="button" onclick="closeSelectEditModal()" class="px-5 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 font-bold text-xs hover:bg-slate-50 dark:hover:bg-slate-800">Cancel</button>
+          <button type="button" onclick="confirmSelectEditProduct()" class="px-6 py-2.5 rounded-xl bg-amber-600 hover:bg-amber-700 text-white font-bold text-xs shadow-lg shadow-amber-600/20">Proceed to Edit</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div id="modal-edit-product" class="fixed inset-0 z-50 bg-slate-950/80 backdrop-blur-sm hidden flex items-center justify-center p-4">
+    <div class="bg-white dark:bg-slate-900 rounded-3xl max-w-3xl w-full p-6 border border-slate-200 dark:border-slate-800 shadow-2xl flex flex-col max-h-[88vh] overflow-hidden">
+      <div class="flex items-center justify-between border-b border-slate-100 dark:border-slate-800 pb-4 flex-shrink-0">
+        <div>
+          <h3 class="font-extrabold text-lg text-slate-900 dark:text-white">Edit Medicine SKU & Inventory Control</h3>
+          <p class="text-xs text-slate-500 dark:text-slate-400">Modify product details, tax rates, and all existing batch quantities & pricing</p>
+        </div>
+        <button onclick="closeEditProductModal()" class="text-slate-400 hover:text-slate-600 dark:hover:text-white">
+          <i data-lucide="x" class="w-5 h-5"></i>
+        </button>
+      </div>
+
+      <form id="form-edit-product" class="space-y-6 overflow-y-auto pr-2 flex-1 py-2 custom-scrollbar">
+        <input type="hidden" id="edit-prod-id" />
+        <div class="space-y-4">
+          <h4 class="text-xs font-extrabold uppercase tracking-wider text-emerald-600 dark:text-emerald-400 border-b border-slate-100 dark:border-slate-800 pb-1.5">1. Basic SKU Specifications</h4>
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <div>
+              <label class="block text-xs font-bold text-slate-600 dark:text-slate-300 mb-1.5 uppercase">Medicine Name</label>
+              <input type="text" id="edit-prod-name" class="w-full px-4 py-2 rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-xs font-semibold focus:outline-none focus:ring-2 focus:ring-emerald-500 dark:text-white" required />
+            </div>
+            <div>
+              <label class="block text-xs font-bold text-slate-600 dark:text-slate-300 mb-1.5 uppercase">Barcode SKU Code</label>
+              <input type="text" id="edit-prod-barcode" class="w-full px-4 py-2 rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-xs font-mono font-semibold focus:outline-none focus:ring-2 focus:ring-emerald-500 dark:text-white" required />
+            </div>
+            <div>
+              <label class="block text-xs font-bold text-slate-600 dark:text-slate-300 mb-1.5 uppercase">Category</label>
+              <select id="edit-prod-category" class="w-full px-4 py-2 rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-xs font-bold focus:outline-none focus:ring-2 focus:ring-emerald-500 dark:text-white">
+                <option value="Antibiotics">Antibiotics</option>
+                <option value="Antiparasitic">Antiparasitic</option>
+                <option value="Pain Management">Pain Management</option>
+                <option value="Vaccines">Vaccines</option>
+                <option value="Supplements">Supplements</option>
+                <option value="Dermatological">Dermatological</option>
+              </select>
+            </div>
+            <div>
+              <label class="block text-xs font-bold text-slate-600 dark:text-slate-300 mb-1.5 uppercase">Dispensing Unit</label>
+              <select id="edit-prod-unit" class="w-full px-4 py-2 rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-xs font-bold focus:outline-none focus:ring-2 focus:ring-emerald-500 dark:text-white">
+                <option value="Blister Pack">Blister Pack</option>
+                <option value="Unit Dose">Unit Dose (Single Tablet / Pill)</option>
+                <option value="Vial">Vial</option>
+                <option value="Bottle">Bottle</option>
+                <option value="Can">Can</option>
+                <option value="Pack">Pack</option>
+              </select>
+            </div>
+            <div>
+              <label class="block text-xs font-bold text-slate-600 dark:text-slate-300 mb-1.5 uppercase">Tablets / Doses per Pack</label>
+              <input type="number" id="edit-prod-pack-size" min="1" class="w-full px-4 py-2 rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-xs font-bold focus:outline-none focus:ring-2 focus:ring-emerald-500 dark:text-white" required />
+            </div>
+            <div>
+              <label class="block text-xs font-bold text-slate-600 dark:text-slate-300 mb-1.5 uppercase">Min Stock Threshold</label>
+              <input type="number" id="edit-prod-min-stock" min="1" class="w-full px-4 py-2 rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-xs font-semibold focus:outline-none focus:ring-2 focus:ring-emerald-500 dark:text-white" required />
+            </div>
+            <div>
+              <label class="block text-xs font-bold text-slate-600 dark:text-slate-300 mb-1.5 uppercase">GST / Tax Rate (%)</label>
+              <input type="number" id="edit-prod-tax-rate" min="0" max="100" step="0.5" class="w-full px-4 py-2 rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-xs font-mono font-bold text-amber-600 dark:text-amber-400 focus:outline-none focus:ring-2 focus:ring-emerald-500" required />
+            </div>
+            <div>
+              <label class="block text-xs font-bold text-slate-600 dark:text-slate-300 mb-1.5 uppercase">Prescribing Vet Doctor</label>
+              <select id="edit-prod-vet-doctor" class="w-full px-4 py-2 rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-xs font-bold focus:outline-none focus:ring-2 focus:ring-emerald-500 dark:text-white"></select>
+            </div>
+          </div>
+          <div class="flex items-center gap-3 py-1">
+            <input type="checkbox" id="edit-prod-requires-rx" class="w-4 h-4 rounded text-emerald-600 focus:ring-emerald-500" />
+            <label for="edit-prod-requires-rx" class="text-xs font-bold text-slate-700 dark:text-slate-300">Requires Veterinarian Prescription (DRAP Controlled Schedule)</label>
+          </div>
+          <div>
+            <label class="block text-xs font-bold text-slate-600 dark:text-slate-300 mb-1 uppercase">Clinical Description</label>
+            <textarea id="edit-prod-description" rows="2" class="w-full px-4 py-2 rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-xs font-semibold focus:outline-none focus:ring-2 focus:ring-emerald-500 dark:text-white"></textarea>
+          </div>
+        </div>
+
+        <div class="space-y-3 pt-2">
+          <h4 class="text-xs font-extrabold uppercase tracking-wider text-amber-600 dark:text-amber-400 border-b border-slate-100 dark:border-slate-800 pb-1.5 flex items-center justify-between">
+            <span>2. Batches & Stock Pricing History</span>
+            <span class="text-[10px] font-semibold text-slate-400">Edit quantities, prices or expiry dates directly</span>
+          </h4>
+          <div id="edit-prod-batches-container" class="space-y-3"></div>
+        </div>
+
+        <div class="pt-4 flex items-center justify-end gap-3 border-t border-slate-100 dark:border-slate-800 flex-shrink-0">
+          <button type="button" onclick="closeEditProductModal()" class="px-5 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 font-bold text-xs hover:bg-slate-50 dark:hover:bg-slate-800">Cancel</button>
+          <button type="submit" class="px-6 py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs shadow-lg shadow-emerald-600/20">Save All Changes</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <div id="modal-rx-warning" class="fixed inset-0 z-50 bg-slate-950/80 backdrop-blur-sm hidden flex items-center justify-center p-4">
+    <div class="bg-white dark:bg-slate-900 rounded-3xl max-w-md w-full p-8 border border-slate-200 dark:border-slate-800 shadow-2xl space-y-5">
+      <div class="flex items-center gap-3.5">
+        <div class="w-12 h-12 rounded-2xl bg-amber-100 dark:bg-amber-950/80 text-amber-600 dark:text-amber-400 flex items-center justify-center flex-shrink-0">
+          <i data-lucide="shield-alert" class="w-6 h-6"></i>
+        </div>
+        <div>
+          <h3 class="font-extrabold text-lg text-slate-900 dark:text-white">Prescription Verification</h3>
+          <p class="text-xs text-slate-500 dark:text-slate-400">DRAP Controlled Schedule Veterinary Drug</p>
+        </div>
+      </div>
+
+      <div class="p-4 rounded-2xl bg-amber-50 dark:bg-amber-950/30 border border-amber-200 dark:border-amber-900/50 space-y-1 font-mono text-xs text-amber-900 dark:text-amber-200">
+        <p class="font-bold">Medicine: <span id="rx-medicine-name" class="font-sans font-extrabold"></span></p>
+        <p class="text-[11px]">This antibiotic/vaccine requires signature of an authorized veterinary practitioner.</p>
+      </div>
+
+      <div class="space-y-1.5">
+        <div class="flex items-center justify-between">
+          <label class="block text-xs font-bold text-slate-600 dark:text-slate-300 uppercase">Select Prescribing Vet Doctor:</label>
+        </div>
+        <select id="rx-doctor-select" class="w-full px-4 py-3 rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-xs font-bold focus:outline-none focus:ring-2 focus:ring-emerald-500 dark:text-white"></select>
+      </div>
+
+      <div class="flex items-center justify-end gap-3 pt-2">
+        <button id="btn-cancel-rx" type="button" class="px-5 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 font-bold text-xs hover:bg-slate-50 dark:hover:bg-slate-800">Cancel</button>
+        <button id="btn-confirm-rx" type="button" class="px-6 py-2.5 rounded-xl bg-amber-600 hover:bg-amber-700 text-white font-bold text-xs shadow-lg shadow-amber-600/20">Verify & Add to Cart</button>
+      </div>
+    </div>
+  </div>
+
+  <div id="modal-edit-sale" class="fixed inset-0 z-50 bg-slate-950/80 backdrop-blur-sm hidden flex items-center justify-center p-4">
+    <div class="bg-white dark:bg-slate-900 rounded-3xl max-w-xl w-full p-6 border border-slate-200 dark:border-slate-800 shadow-2xl space-y-4">
+      <div class="flex items-center justify-between border-b border-slate-100 dark:border-slate-800 pb-3">
+        <div>
+          <h3 class="font-extrabold text-base text-slate-900 dark:text-white">Edit Previous Sale (<span id="edit-sale-receipt"></span>)</h3>
+          <p class="text-xs text-slate-500 dark:text-slate-400">Modifying item quantities automatically restores/deducts stock and logs audit trail</p>
+        </div>
+        <button onclick="document.getElementById('modal-edit-sale')?.classList.add('hidden')" class="text-slate-400 hover:text-slate-700 dark:hover:text-white"><i data-lucide="x" class="w-5 h-5"></i></button>
+      </div>
+
+      <div id="edit-sale-items-list" class="space-y-3 max-h-72 overflow-y-auto pr-1 custom-scrollbar divide-y divide-slate-100 dark:divide-slate-800/60"></div>
+
+      <div class="flex items-center justify-between pt-3 border-t border-slate-100 dark:border-slate-800 font-bold text-sm">
+        <span>Updated Total Amount:</span>
+        <span id="edit-sale-total" class="font-mono font-extrabold text-emerald-600 dark:text-emerald-400">Rs. 0.00</span>
+      </div>
+
+      <div class="flex items-center justify-end gap-3 pt-2">
+        <button onclick="document.getElementById('modal-edit-sale')?.classList.add('hidden')" class="px-5 py-2 rounded-xl border border-slate-200 dark:border-slate-700 font-bold text-xs">Close</button>
+        <button id="btn-save-edited-sale" class="px-6 py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs shadow-lg shadow-emerald-600/20">Save Modifications</button>
+      </div>
+    </div>
+  </div>
+
+  <div id="modal-admin-alerts" class="fixed inset-0 z-50 bg-slate-950/80 backdrop-blur-sm hidden flex items-center justify-center p-4">
+    <div class="bg-white dark:bg-slate-900 rounded-3xl max-w-2xl w-full p-6 border border-slate-200 dark:border-slate-800 shadow-2xl space-y-4">
+      <div class="flex items-center justify-between border-b border-slate-100 dark:border-slate-800 pb-3">
+        <div class="flex items-center gap-3">
+          <div class="w-10 h-10 rounded-2xl bg-indigo-100 dark:bg-indigo-950/80 text-indigo-600 dark:text-indigo-400 flex items-center justify-center">
+            <i data-lucide="bell-ring" class="w-5 h-5"></i>
+          </div>
+          <div>
+            <h3 class="font-extrabold text-base text-slate-900 dark:text-white">Admin Modification Audit Trail</h3>
+            <p class="text-xs text-slate-500 dark:text-slate-400">Security log of all sale edits made by cashiers or staff</p>
+          </div>
+        </div>
+        <button onclick="closeAdminAlertsModal(false)" class="text-slate-400 hover:text-slate-700 dark:hover:text-white"><i data-lucide="x" class="w-5 h-5"></i></button>
+      </div>
+      <div id="admin-alerts-list" class="space-y-3 max-h-80 overflow-y-auto pr-1 custom-scrollbar divide-y divide-slate-100 dark:divide-slate-800"></div>
+      <div class="flex items-center justify-end gap-3 pt-2">
+        <button id="btn-mark-all-checked" type="button" class="px-4 py-2 rounded-xl bg-indigo-50 hover:bg-indigo-100 dark:bg-indigo-950/60 dark:hover:bg-indigo-900/80 text-indigo-600 dark:text-indigo-300 font-bold text-xs transition-colors">Mark All Checked</button>
+        <button id="btn-ack-close-alerts" onclick="closeAdminAlertsModal(true)" class="px-5 py-2 rounded-xl bg-slate-900 dark:bg-slate-800 hover:bg-slate-800 dark:hover:bg-slate-700 text-white font-bold text-xs transition-colors">Acknowledge & Close</button>
+      </div>
+    </div>
+  </div>
+
+  <div id="modal-invoice-print" class="fixed inset-0 z-50 bg-slate-950/80 backdrop-blur-sm hidden flex items-center justify-center p-4 overflow-y-auto">
+    <div id="invoice-print-card" class="bg-white text-slate-900 max-w-md w-full mx-auto p-7 border border-slate-300 rounded-3xl shadow-2xl space-y-5 my-auto font-sans text-center">
+      <div class="space-y-1.5 border-b border-slate-300 pb-4 text-center">
+        <h3 class="font-extrabold text-lg text-slate-900 tracking-tight">Veterinary Store & Clinic</h3>
+        <p class="text-[11px] text-slate-600 font-semibold">Islamabad, Pakistan</p>
+        <p class="text-[10px] text-slate-500 font-mono">Helpline: 051-2345678 | DRAP Reg: DRAP/VET/ISL-2026-991</p>
+      </div>
+
+      <div class="flex items-center justify-between text-xs py-2 border-b border-slate-200 text-left font-mono">
+        <div>
+          <span class="text-[10px] uppercase font-bold text-slate-500 block">Receipt # / Date:</span>
+          <span id="inv-receipt-number" class="block font-bold text-slate-900 text-xs"></span>
+          <span id="inv-date-time" class="block text-[11px] text-slate-600"></span>
+        </div>
+        <div class="text-right">
+          <span class="text-[10px] uppercase font-bold text-slate-500 block">Staff / Payment Mode:</span>
+          <span id="inv-cashier-name" class="block font-bold text-slate-900 text-xs"></span>
+          <span id="inv-payment-method" class="block text-[11px] font-extrabold text-emerald-700"></span>
+        </div>
+      </div>
+
+      <div id="inv-crm-section" class="hidden text-xs py-2 border-b border-slate-200 text-left font-mono">
+        <span class="text-[10px] uppercase font-bold text-slate-500 block">Patient / Pet & Owner:</span>
+        <span id="inv-pet-name" class="block font-bold text-slate-900 text-xs"></span>
+        <span id="inv-owner-info" class="block text-[11px] text-slate-600"></span>
+      </div>
+
+      <div class="text-left">
+        <table class="w-full text-left text-xs">
+          <thead>
+            <tr class="border-b border-slate-300 font-mono text-[10px] uppercase text-slate-600 font-bold">
+              <th class="py-2">Medicine SKU</th>
+              <th class="py-2 text-center">Qty</th>
+              <th class="py-2 text-right">Price</th>
+              <th class="py-2 text-right">Subtotal</th>
+            </tr>
+          </thead>
+          <tbody id="inv-items-tbody" class="divide-y divide-slate-200 font-mono text-xs"></tbody>
+        </table>
+      </div>
+
+      <div class="pt-3 border-t-2 border-slate-900 space-y-1.5 font-mono text-xs text-right">
+        <div class="flex items-center justify-between text-slate-600 font-semibold">
+          <span>Subtotal Amount:</span>
+          <span id="inv-subtotal" class="font-bold text-slate-900">Rs. 0.00</span>
+        </div>
+        <div class="flex items-center justify-between text-amber-700 font-semibold">
+          <span>GST / Tax Total:</span>
+          <span id="inv-tax" class="font-bold">Rs. 0.00</span>
+        </div>
+        <div class="flex items-center justify-between pt-2 border-t border-slate-300 font-bold text-base text-slate-900">
+          <span class="uppercase tracking-wider">Total Payable:</span>
+          <span id="inv-total-amount" class="text-lg font-extrabold text-emerald-700">Rs. 0.00</span>
+        </div>
+      </div>
+
+      <div id="inv-rx-section" class="hidden p-2.5 rounded-xl bg-amber-50 border border-amber-300 text-[11px] font-mono text-amber-900 text-left">
+        <p class="font-bold flex items-center gap-1.5">
+          <i data-lucide="shield-check" class="w-4 h-4 text-amber-700"></i> Veterinarian Rx Verified:
+        </p>
+        <p id="inv-doctor-name" class="font-semibold pl-5"></p>
+      </div>
+
+      <div class="text-center pt-3 border-t border-slate-200 text-[10px] text-slate-500 font-sans space-y-1">
+        <p class="font-bold text-slate-800">Thank you for choosing Veterinary Store & Clinic Islamabad!</p>
+        <p>Keep veterinary medicines out of reach of children. Store below 25°C.</p>
+        <p class="font-mono text-[9px] text-slate-400">Printed via Clinical POS Register System</p>
+      </div>
+
+      <div class="pt-3 flex items-center justify-end gap-3 no-print">
+        <button id="btn-close-invoice" class="px-5 py-2.5 rounded-xl border border-slate-300 text-slate-700 font-bold text-xs hover:bg-slate-100">Close</button>
+        <button onclick="window.print()" class="px-6 py-2.5 rounded-xl bg-slate-900 text-white font-bold text-xs flex items-center gap-2 shadow-sm">
+          <i data-lucide="printer" class="w-4 h-4"></i> Print Receipt
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <div id="modal-add-owner" class="fixed inset-0 z-50 bg-slate-950/80 backdrop-blur-sm hidden flex items-center justify-center p-4 overflow-y-auto">
+    <div class="bg-white dark:bg-slate-900 rounded-3xl max-w-md w-full p-6 border border-slate-200 dark:border-slate-800 shadow-2xl space-y-4 my-auto">
+      <div class="flex items-center justify-between border-b border-slate-100 dark:border-slate-800 pb-3">
+        <div class="flex items-center gap-2.5">
+          <div class="w-10 h-10 rounded-2xl bg-emerald-100 dark:bg-emerald-950/80 text-emerald-600 dark:text-emerald-400 flex items-center justify-center">
+            <i data-lucide="user-plus" class="w-5 h-5"></i>
+          </div>
+          <div>
+            <h3 class="font-extrabold text-base text-slate-900 dark:text-white">Register Pet Owner</h3>
+            <p class="text-xs text-slate-500 dark:text-slate-400">Add new client to clinic database</p>
+          </div>
+        </div>
+        <button onclick="document.getElementById('modal-add-owner')?.classList.add('hidden')" class="text-slate-400 hover:text-slate-700 dark:hover:text-white"><i data-lucide="x" class="w-5 h-5"></i></button>
+      </div>
+
+      <form id="form-add-owner" class="space-y-4">
+        <div>
+          <label class="block text-xs font-bold text-slate-600 dark:text-slate-300 mb-1.5 uppercase">Owner Full Name</label>
+          <input type="text" id="owner-name" placeholder="e.g. Demo Client Name" class="w-full px-4 py-2.5 rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-xs font-semibold focus:outline-none focus:ring-2 focus:ring-emerald-500 dark:text-white" required />
+        </div>
+        <div>
+          <label class="block text-xs font-bold text-slate-600 dark:text-slate-300 mb-1.5 uppercase">Phone Number</label>
+          <input type="text" id="owner-phone" placeholder="e.g. +1 (555) 010-0000" class="w-full px-4 py-2.5 rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-xs font-semibold focus:outline-none focus:ring-2 focus:ring-emerald-500 dark:text-white" required />
+        </div>
+        <div>
+          <label class="block text-xs font-bold text-slate-600 dark:text-slate-300 mb-1.5 uppercase">Email Address (Optional)</label>
+          <input type="email" id="owner-email" placeholder="client@example.com" class="w-full px-4 py-2.5 rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-xs font-semibold focus:outline-none focus:ring-2 focus:ring-emerald-500 dark:text-white" />
+        </div>
+        <div>
+          <label class="block text-xs font-bold text-slate-600 dark:text-slate-300 mb-1.5 uppercase">Physical Address / Sector</label>
+          <input type="text" id="owner-address" placeholder="e.g. 100 Demo Clinic Way" class="w-full px-4 py-2.5 rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-xs font-semibold focus:outline-none focus:ring-2 focus:ring-emerald-500 dark:text-white" />
+        </div>
+        <div class="flex items-center justify-end gap-2 pt-2">
+          <button type="button" onclick="document.getElementById('modal-add-owner')?.classList.add('hidden')" class="px-4 py-2 rounded-xl border border-slate-200 dark:border-slate-700 font-bold text-xs">Cancel</button>
+          <button type="submit" class="px-5 py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs shadow-md shadow-emerald-600/20">Save Client Profile</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <div id="modal-add-pet" class="fixed inset-0 z-50 bg-slate-950/80 backdrop-blur-sm hidden flex items-center justify-center p-4 overflow-y-auto">
+    <div class="bg-white dark:bg-slate-900 rounded-3xl max-w-md w-full p-6 border border-slate-200 dark:border-slate-800 shadow-2xl space-y-4 my-auto">
+      <div class="flex items-center justify-between border-b border-slate-100 dark:border-slate-800 pb-3">
+        <div class="flex items-center gap-2.5">
+          <div class="w-10 h-10 rounded-2xl bg-slate-900 text-emerald-400 flex items-center justify-center">
+            <i data-lucide="paw-print" class="w-5 h-5"></i>
+          </div>
+          <div>
+            <h3 class="font-extrabold text-base text-slate-900 dark:text-white">Register Patient (Pet)</h3>
+            <p class="text-xs text-slate-500 dark:text-slate-400">Link patient to a registered owner</p>
+          </div>
+        </div>
+        <button onclick="document.getElementById('modal-add-pet')?.classList.add('hidden')" class="text-slate-400 hover:text-slate-700 dark:hover:text-white"><i data-lucide="x" class="w-5 h-5"></i></button>
+      </div>
+
+      <form id="form-add-pet" class="space-y-4">
+        <div>
+          <label class="block text-xs font-bold text-slate-600 dark:text-slate-300 mb-1.5 uppercase">Select Owner / Client</label>
+          <select id="pet-owner-select" class="w-full px-4 py-2.5 rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-xs font-semibold focus:outline-none focus:ring-2 focus:ring-emerald-500 dark:text-white" required></select>
+        </div>
+        <div>
+          <label class="block text-xs font-bold text-slate-600 dark:text-slate-300 mb-1.5 uppercase">Pet / Animal Name</label>
+          <input type="text" id="pet-name" placeholder="e.g. Simba" class="w-full px-4 py-2.5 rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-xs font-semibold focus:outline-none focus:ring-2 focus:ring-emerald-500 dark:text-white" required />
+        </div>
+        <div class="grid grid-cols-2 gap-3">
+          <div>
+            <label class="block text-xs font-bold text-slate-600 dark:text-slate-300 mb-1.5 uppercase">Species</label>
+            <select id="pet-species" class="w-full px-3 py-2.5 rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-xs font-semibold focus:outline-none focus:ring-2 focus:ring-emerald-500 dark:text-white">
+              <option value="Canine (Dog)">Canine (Dog)</option>
+              <option value="Feline (Cat)">Feline (Cat)</option>
+              <option value="Bovine (Cattle)">Bovine (Cattle)</option>
+              <option value="Equine (Horse)">Equine (Horse)</option>
+              <option value="Ovine / Caprine">Ovine / Caprine</option>
+              <option value="Avian / Poultry">Avian / Poultry</option>
+              <option value="Other">Other Species</option>
+            </select>
+          </div>
+          <div>
+            <label class="block text-xs font-bold text-slate-600 dark:text-slate-300 mb-1.5 uppercase">Breed</label>
+            <input type="text" id="pet-breed" placeholder="German Shepherd" class="w-full px-3 py-2.5 rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-xs font-semibold focus:outline-none focus:ring-2 focus:ring-emerald-500 dark:text-white" />
+          </div>
+        </div>
+        <div class="grid grid-cols-2 gap-3">
+          <div>
+            <label class="block text-xs font-bold text-slate-600 dark:text-slate-300 mb-1.5 uppercase">Age (Years)</label>
+            <input type="number" step="0.1" id="pet-age" placeholder="2.5" class="w-full px-3 py-2.5 rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-xs font-semibold focus:outline-none focus:ring-2 focus:ring-emerald-500 dark:text-white" />
+          </div>
+          <div>
+            <label class="block text-xs font-bold text-slate-600 dark:text-slate-300 mb-1.5 uppercase">Weight (kg)</label>
+            <input type="number" step="0.1" id="pet-weight" placeholder="32.0" class="w-full px-3 py-2.5 rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-xs font-semibold focus:outline-none focus:ring-2 focus:ring-emerald-500 dark:text-white" />
+          </div>
+        </div>
+        <div>
+          <label class="block text-xs font-bold text-slate-600 dark:text-slate-300 mb-1.5 uppercase">Clinical Notes / Allergies</label>
+          <textarea id="pet-notes" rows="2" placeholder="Vaccination history, sensitive reactions..." class="w-full px-4 py-2 rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-xs font-semibold focus:outline-none focus:ring-2 focus:ring-emerald-500 dark:text-white"></textarea>
+        </div>
+        <div class="flex items-center justify-end gap-2 pt-2">
+          <button type="button" onclick="document.getElementById('modal-add-pet')?.classList.add('hidden')" class="px-4 py-2 rounded-xl border border-slate-200 dark:border-slate-700 font-bold text-xs">Cancel</button>
+          <button type="submit" class="px-5 py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs shadow-md shadow-emerald-600/20">Save Patient Profile</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <div id="toast-container" class="fixed bottom-6 right-6 z-50 flex flex-col gap-2.5 pointer-events-none max-w-sm w-full no-print"></div>
+
+  <script src="env.js"></script>
+  <script src="js/config.js"></script>
+  <script src="js/auth.js"></script>
+  <script src="js/scanner.js"></script>
+  <script src="js/dashboard.js"></script>
+  <script src="js/inventory.js"></script>
+  <script src="js/pos.js"></script>
+  <script src="js/sales.js"></script>
+  <script src="js/reports.js"></script>
+  <script src="js/admin.js"></script>
+  <script src="js/app.js"></script>
+</body>
+</html>

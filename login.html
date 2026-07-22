@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="en" class="dark">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="theme-color" content="#10b981" />
+  <meta name="mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+  <meta name="apple-mobile-web-app-title" content="Vet Store" />
+  <link rel="manifest" href="manifest.json" />
+  <link rel="apple-touch-icon" href="https://images.unsplash.com/photo-1584308666744-24d5c474f2ae?w=192&auto=format&fit=crop&q=80" />
+  <title>Staff Login | Veterinary Store & Clinic</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          colors: {
+            brand: {
+              50: '#ecfdf5',
+              100: '#d1fae5',
+              500: '#10b981',
+              600: '#059669',
+              700: '#047857',
+              900: '#064e3b'
+            }
+          }
+        }
+      }
+    };
+  </script>
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <link rel="stylesheet" href="css/style.css" />
+</head>
+<body class="bg-slate-950 text-slate-100 font-sans antialiased min-h-screen flex items-center justify-center p-4 selection:bg-emerald-500 selection:text-white">
+  <div class="w-full max-w-md bg-slate-900/90 border border-slate-800 rounded-3xl p-8 shadow-2xl backdrop-blur-xl relative overflow-hidden">
+    <div class="absolute top-0 left-0 right-0 h-1.5 bg-gradient-to-r from-emerald-500 via-teal-500 to-sky-500"></div>
+
+    <div class="flex flex-col items-center text-center mb-8 pt-2">
+      <div class="w-16 h-16 rounded-2xl bg-gradient-to-br from-emerald-500 to-teal-700 flex items-center justify-center shadow-lg shadow-emerald-500/30 mb-4 border border-emerald-400/30">
+        <i data-lucide="shield-check" class="w-9 h-9 text-white"></i>
+      </div>
+      <h1 class="text-2xl font-black tracking-tight text-white">Veterinary Store & Clinic</h1>
+      <p class="text-xs font-semibold text-emerald-400 tracking-wider uppercase mt-1">Islamabad Medical Portal</p>
+      <p class="text-xs text-slate-400 mt-2">Authorized Staff & Medical Personnel Access</p>
+    </div>
+
+    <form id="form-login" class="space-y-5">
+      <div>
+        <label for="login-email" class="block text-xs font-bold uppercase tracking-wider text-slate-300 mb-2">Staff Email Address</label>
+        <div class="relative">
+          <span class="absolute inset-y-0 left-0 flex items-center pl-3.5 pointer-events-none text-slate-500">
+            <i data-lucide="mail" class="w-4 h-4"></i>
+          </span>
+          <input type="email" id="login-email" required placeholder="admin@vetstore.com" class="w-full pl-10 pr-4 py-3 rounded-2xl bg-slate-800/80 border border-slate-700 text-sm font-semibold text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent transition-all" />
+        </div>
+      </div>
+
+      <div>
+        <label for="login-password" class="block text-xs font-bold uppercase tracking-wider text-slate-300 mb-2">Security Password</label>
+        <div class="relative">
+          <span class="absolute inset-y-0 left-0 flex items-center pl-3.5 pointer-events-none text-slate-500">
+            <i data-lucide="lock" class="w-4 h-4"></i>
+          </span>
+          <input type="password" id="login-password" required placeholder="••••••••••••" class="w-full pl-10 pr-11 py-3 rounded-2xl bg-slate-800/80 border border-slate-700 text-sm font-semibold text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent transition-all" />
+          <button type="button" id="toggle-login-password" aria-label="Toggle password visibility" class="absolute inset-y-0 right-0 flex items-center pr-3.5 text-slate-500 hover:text-emerald-400 focus:outline-none transition-colors">
+            <i data-lucide="eye" id="login-password-eye" class="w-4 h-4"></i>
+          </button>
+        </div>
+      </div>
+
+      <div id="login-error-box" class="hidden bg-rose-950/60 border border-rose-800/80 text-rose-300 text-xs font-semibold p-3.5 rounded-xl flex items-center gap-2.5">
+        <i data-lucide="alert-circle" class="w-4 h-4 text-rose-400 shrink-0"></i>
+        <span id="login-error-text">Authentication failed.</span>
+      </div>
+
+      <button type="submit" id="login-submit-btn" class="w-full py-3.5 rounded-2xl bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 text-white font-bold text-sm shadow-lg shadow-emerald-600/25 flex items-center justify-center gap-2.5 transition-all transform active:scale-[0.98]">
+        <i data-lucide="log-in" class="w-4 h-4"></i>
+        <span>Sign In to Portal</span>
+      </button>
+    </form>
+
+    <div class="mt-8 pt-6 border-t border-slate-800/80 text-center">
+      <p class="text-[11px] font-medium text-slate-500 flex items-center justify-center gap-1.5">
+        <i data-lucide="lock" class="w-3.5 h-3.5 text-emerald-500"></i>
+        <span>256-Bit Encrypted Supabase Connection</span>
+      </p>
+    </div>
+  </div>
+
+  <div id="toast-container" class="fixed bottom-6 right-6 z-50 flex flex-col gap-2.5 pointer-events-none max-w-sm w-full"></div>
+
+  <script src="env.js"></script>
+  <script src="js/login.js"></script>
+  <script>
+    if (window.lucide) {
+      lucide.createIcons();
+    }
+  </script>
+</body>
+</html>
