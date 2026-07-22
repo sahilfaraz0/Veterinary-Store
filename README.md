@@ -4,15 +4,18 @@
 ![Status: Production Ready](https://img.shields.io/badge/Status-Production%20Ready-0284c7.svg)
 ![Deployment: Vercel](https://img.shields.io/badge/Deployment-Vercel-black.svg)
 ![Tech: Vanilla JS / Tailwind / Supabase](https://img.shields.io/badge/Tech-Vanilla%20JS%20%7C%20Tailwind%20%7C%20Supabase-3b82f6.svg)
-![Live Demo](https://img.shields.io/badge/Live_Demo-Online-success?style=for-the-badge)
 
 **Veterinary Store & Clinic** is a state-of-the-art, full-stack Point of Sale (POS) and Veterinary Clinic Management Single-Page Application (SPA). Engineered with a stunning **Liquid Glassmorphism UI**, offline-first Progressive Web App (PWA) resilience, and cloud database synchronization, this platform streamlines high-speed retail checkout, inventory tracking, clinical patient relationship management (CRM), and business intelligence.
 
-👉 **[View Live Application](https://veterinary-store.vercel.app)**
+  👉 **[View Live Application](https://veterinary-store.vercel.app)**
+* Email:`admin@vetstore.com`
+* Password:`vetstore123`
 
 ---
 
 ## 📸 System Preview
+**Login Welcome Screen**
+![Login Welcome](./assets/login.gif)
 
 *(Add your main screenshot or GIF here in the `/assets` folder)*
 ![POS Checkout Screen](./assets/pos-screen.png)
