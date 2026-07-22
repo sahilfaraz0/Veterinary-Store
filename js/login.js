@@ -1,9 +1,67 @@
 document.addEventListener('DOMContentLoaded', async () => {
+  initLoginTheme();
+  setupLiquidRipples();
+
   if (window.lucide) {
     lucide.createIcons();
   }
 
   initLoginSupabase();
+
+  const themeToggleBtn = document.getElementById('btn-theme-toggle-login');
+  if (themeToggleBtn) {
+    themeToggleBtn.addEventListener('click', () => {
+      const isDark = document.documentElement.classList.toggle('dark');
+      try {
+        localStorage.setItem('app-theme', isDark ? 'dark' : 'light');
+      } catch (e) {}
+      if (window.lucide) lucide.createIcons();
+    });
+  }
+
+  const welcomeScreen = document.getElementById('portal-welcome-screen');
+  const loginScreen = document.getElementById('portal-login-screen');
+  const loadingBar = document.getElementById('portal-loading-bar');
+
+  if (loadingBar) {
+    requestAnimationFrame(() => {
+      setTimeout(() => {
+        loadingBar.style.width = '100%';
+      }, 50);
+    });
+  }
+
+  let autoSwitchTimer = null;
+  let isSwitched = false;
+
+  if (welcomeScreen && loginScreen) {
+    const switchToLogin = () => {
+      if (autoSwitchTimer) clearTimeout(autoSwitchTimer);
+      if (isSwitched) return;
+      isSwitched = true;
+
+      welcomeScreen.classList.add('opacity-0', 'scale-95', '-translate-y-4');
+      setTimeout(() => {
+        welcomeScreen.classList.add('hidden');
+        loginScreen.classList.remove('hidden');
+        if (window.lucide) lucide.createIcons();
+
+        requestAnimationFrame(() => {
+          setTimeout(() => {
+            loginScreen.classList.remove('opacity-0', 'scale-95', 'translate-y-4');
+            const emailInput = document.getElementById('login-email');
+            if (emailInput) emailInput.focus();
+          }, 50);
+        });
+      }, 400);
+    };
+
+    autoSwitchTimer = setTimeout(() => {
+      if (!welcomeScreen.classList.contains('hidden')) {
+        switchToLogin();
+      }
+    }, 2500);
+  }
 
   const toggleBtn = document.getElementById('toggle-login-password');
   const passInput = document.getElementById('login-password');
@@ -95,6 +153,19 @@ document.addEventListener('DOMContentLoaded', async () => {
   }
 });
 
+function initLoginTheme() {
+  try {
+    const saved = localStorage.getItem('app-theme');
+    if (saved === 'light') {
+      document.documentElement.classList.remove('dark');
+    } else {
+      document.documentElement.classList.add('dark');
+    }
+  } catch (e) {
+    document.documentElement.classList.add('dark');
+  }
+}
+
 function initLoginSupabase() {
   const url = window.ENV?.SUPABASE_URL || window.SUPABASE_URL || (typeof SUPABASE_URL !== 'undefined' ? SUPABASE_URL : '');
   const key = window.ENV?.SUPABASE_ANON_KEY || window.SUPABASE_ANON_KEY || (typeof SUPABASE_ANON_KEY !== 'undefined' ? SUPABASE_ANON_KEY : '');
@@ -116,4 +187,34 @@ function showLoginError(msg) {
   const errorText = document.getElementById('login-error-text');
   if (errorText) errorText.textContent = msg;
   if (errorBox) errorBox.classList.remove('hidden');
+}
+
+function setupLiquidRipples() {
+  document.addEventListener('click', (e) => {
+    const btn = e.target.closest('.btn-liquid-magnetic, button');
+    if (!btn || btn.classList.contains('no-ripple')) return;
+
+    const rect = btn.getBoundingClientRect();
+    const ripple = document.createElement('span');
+    ripple.className = 'liquid-ripple';
+    const size = Math.max(rect.width, rect.height) * 2.2;
+    ripple.style.width = size + 'px';
+    ripple.style.height = size + 'px';
+    ripple.style.left = (e.clientX - rect.left - size / 2) + 'px';
+    ripple.style.top = (e.clientY - rect.top - size / 2) + 'px';
+
+    btn.appendChild(ripple);
+    if (typeof anime !== 'undefined') {
+      anime({
+        targets: ripple,
+        scale: [0, 1],
+        opacity: [0.75, 0],
+        duration: 650,
+        easing: 'easeOutExpo',
+        complete: () => ripple.remove()
+      });
+    } else {
+      setTimeout(() => ripple.remove(), 650);
+    }
+  });
 }
