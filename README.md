@@ -1,15 +1,28 @@
-# Veterinary Store & Clinic - POS Management System
+# 🐾 Veterinary Store & Clinic - POS Management System
 
 ![License: Proprietary](https://img.shields.io/badge/License-Proprietary%20(Portfolio)-emerald.svg)
 ![Status: Production Ready](https://img.shields.io/badge/Status-Production%20Ready-0284c7.svg)
 ![Deployment: Vercel](https://img.shields.io/badge/Deployment-Vercel-black.svg)
 ![Tech: Vanilla JS / Tailwind / Supabase](https://img.shields.io/badge/Tech-Vanilla%20JS%20%7C%20Tailwind%20%7C%20Supabase-3b82f6.svg)
+![Live Demo](https://img.shields.io/badge/Live_Demo-Online-success?style=for-the-badge)
 
 **Veterinary Store & Clinic** is a state-of-the-art, full-stack Point of Sale (POS) and Veterinary Clinic Management Single-Page Application (SPA). Engineered with a stunning **Liquid Glassmorphism UI**, offline-first Progressive Web App (PWA) resilience, and cloud database synchronization, this platform streamlines high-speed retail checkout, inventory tracking, clinical patient relationship management (CRM), and business intelligence.
 
+👉 **[View Live Application](https://veterinary-store.vercel.app)**
+
 ---
 
-## Tech Stack
+## 📸 System Preview
+
+*(Add your main screenshot or GIF here in the `/assets` folder)*
+![POS Checkout Screen](./assets/pos-screen.png)
+
+*(Add a secondary screenshot of the metrics or dashboard)*
+![Admin Dashboard](./assets/admin-dashboard.png)
+
+---
+
+## 💻 Tech Stack
 
 * **Frontend Architecture:** Pure Vanilla JavaScript (ES6+ Modular Pattern) with zero heavy framework bloat for maximum performance and instant load times.
 * **Styling & Aesthetics:** **Tailwind CSS** paired with custom Vanilla CSS (`style.css`), featuring a responsive **Liquid Glass UI (Glassmorphism)** with rotating, multi-colored light-refracting background shapes (`#liquid-bg`), crisp high-contrast typography, and an interactive macOS/iOS-inspired floating pill navigation dock (`no-scrollbar`).
@@ -20,7 +33,7 @@
 
 ---
 
-## Key Features
+## ✨ Key Features
 
 ### 1. Offline Service Worker & PWA Capabilities (`sw.js`)
 * **True Offline-First Operation:** Designed for veterinary clinics requiring uninterrupted checkout capabilities during internet outages. The custom Service Worker caches static assets, product tables, and core UI files.
@@ -41,11 +54,11 @@
 
 ---
 
-## Project Structure & Static Deployment (Vercel)
+## 🗂️ Project Structure & Static Deployment (Vercel)
 
 The repository is organized with a clean, flat architecture tailored for instant static hosting on **Vercel** (`vercel.json` included):
 
-```
+```text
 ├── index.html            # Single-Page Application Root View
 ├── login.html            # Dedicated Security & Portal Authentication View
 ├── vercel.json           # Vercel SPA Routing Rewrites & Static Caching Headers
@@ -69,12 +82,3 @@ The repository is organized with a clean, flat architecture tailored for instant
 └── sql/
     ├── schema.sql        # Supabase PostgreSQL Tables, Functions, Triggers & RLS Policies
     └── seed_data.sql     # Generic Sanitized Demonstration Seed Records
-```
-
----
-
-## License & Portfolio Notice
-
-**Copyright (c) 2026 Veterinary Store & Clinic Management System. All Rights Reserved.**
-
-This source code is provided solely for portfolio and demonstration purposes. Any reproduction, distribution, modification, or commercial use of this code, in whole or in part, is strictly prohibited without explicit written permission. See the [`LICENSE`](./LICENSE) file for details.
