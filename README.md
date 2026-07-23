@@ -18,9 +18,7 @@
 ![Login Welcome](./assets/login.gif)
 
 **Admin Dashboard**
-<video src="./assets/dashboard.mp4" controls="controls" style="max-width: 100%;">
-Admin Dashboard
-</video>
+![Admin Dashboard](./assets/dashboard.mp4)
 
 *(Add a secondary screenshot of the metrics or dashboard)*
 ![Admin Dashboard](./assets/admin-dashboard.png)
