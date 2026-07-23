@@ -21,8 +21,8 @@
 
 <video src="https://github.com/user-attachments/assets/54b8fa2e-274d-4281-8c99-1bb68b0db524" autoplay loop width="100%"></video>
 
-*(Add a secondary screenshot of the metrics or dashboard)*
-![Admin Dashboard](./assets/admin-dashboard.png)
+**Low Stock Alert**
+![Low Stock Alert](./assets/lowstock.gif)
 
 ---
 
