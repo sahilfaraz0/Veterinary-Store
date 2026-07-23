@@ -2,12 +2,14 @@
 
 <div align="center">
   
-![License: Proprietary](https://img.shields.io/badge/License-Proprietary%20(Portfolio)-emerald.svg)
-![Status: Production Ready](https://img.shields.io/badge/Status-Production%20Ready-0284c7.svg)
-[![Vercel](https://img.shields.io/badge/Vercel-%23000000.svg?logo=vercel&logoColor=white)](https://veterinary-store.vercel.app)
-![Supabase](https://img.shields.io/badge/Supabase-3FCF8E?logo=supabase&logoColor=fff)
-![Chart.js](https://img.shields.io/badge/Chart.js-FF6384?logo=chartdotjs&logoColor=fff)
-![Supabase](https://img.shields.io/badge/Supabase-000000?style=for-the-badge&logo=supabase&logoColor=%2339FF14)
+![HTML5](https://img.shields.io/badge/HTML5-000000?style=for-the-badge&logo=html5&logoColor=white)
+![TailwindCSS](https://img.shields.io/badge/TAILWIND_CSS-000000?style=for-the-badge&logo=tailwind-css&logoColor=white)
+![JavaScript](https://img.shields.io/badge/JAVASCRIPT-000000?style=for-the-badge&logo=javascript&logoColor=white)
+![Supabase](https://img.shields.io/badge/SUPABASE-000000?style=for-the-badge&logo=supabase&logoColor=white)
+![Vercel](https://img.shields.io/badge/VERCEL-000000?style=for-the-badge&logo=vercel&logoColor=white)
+![Chart.js](https://img.shields.io/badge/CHART.JS-000000?style=for-the-badge&logo=chart.js&logoColor=white)
+![QR Code](https://img.shields.io/badge/QR_SCANNING-000000?style=for-the-badge&logo=qrcode&logoColor=white)
+![PWA](https://img.shields.io/badge/PWA-000000?style=for-the-badge&logo=pwa&logoColor=white)
 
 </div>
 
