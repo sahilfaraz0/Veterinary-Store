@@ -30,6 +30,10 @@
 
 ![Exipry Alert](./assets/expiryalert.gif)
 
+**Supabase Schema Structure**
+
+![Supabase Schema](./assets/supabase-schema.png)
+
 ---
 
 ## 💻 Tech Stack
