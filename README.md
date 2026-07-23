@@ -15,6 +15,7 @@
 
 ## 📸 System Preview
 **Login Welcome Screen**
+
 ![Login Welcome](./assets/login.gif)
 
 **Admin Dashboard**
@@ -22,9 +23,11 @@
 <video src="https://github.com/user-attachments/assets/54b8fa2e-274d-4281-8c99-1bb68b0db524" autoplay loop width="100%"></video>
 
 **Low Stock Alert**
+
 ![Low Stock Alert](./assets/lowstock.gif)
 
 **Exipry Alert**
+
 ![Exipry Alert](./assets/expiryalert.gif)
 
 ---
