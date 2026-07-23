@@ -19,7 +19,7 @@
 
 **Admin Dashboard**
 
-<video src="./assets/dashboard.mp4" width="100%" controls autoplay loop></video>
+<video src="https://github.com/sahilfaraz0/Veterinary-Store/raw/main/assets/dashboard.mp4" width="100%" controls muted autoplay loop></video>
 
 *(Add a secondary screenshot of the metrics or dashboard)*
 ![Admin Dashboard](./assets/admin-dashboard.png)
