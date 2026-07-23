@@ -304,7 +304,9 @@ async function handleAddProductSubmit(e) {
   };
 
   if (appState.mode === 'SUPABASE' && window.supabaseClient) {
-    const { error } = await supabaseClient.from('products').insert([newProduct]);
+    const supabasePayload = { ...newProduct };
+    delete supabasePayload.tax_rate;
+    const { error } = await supabaseClient.from('products').insert([supabasePayload]);
     if (error) {
       showToast('Supabase SKU error: ' + error.message, 'error');
       return;
@@ -599,7 +601,6 @@ async function handleEditProductSubmit(e) {
       unit: p.unit,
       pack_size: p.pack_size,
       min_stock_level: p.min_stock_level,
-      tax_rate: p.tax_rate,
       requires_rx: p.requires_rx,
       description: p.description,
       vet_doctor: p.vet_doctor
