@@ -18,7 +18,7 @@
 ![Login Welcome](./assets/login.gif)
 
 **Admin Dashboard**
-![Admin Dashboard](./assets/dashboard.mp4)
+<video src="./assets/dashboard.mp4" width="100%" controls autoplay loop></video>
 
 *(Add a secondary screenshot of the metrics or dashboard)*
 ![Admin Dashboard](./assets/admin-dashboard.png)
