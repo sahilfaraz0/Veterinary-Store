@@ -24,6 +24,9 @@
 **Low Stock Alert**
 ![Low Stock Alert](./assets/lowstock.gif)
 
+**Exipry Alert**
+![Exipry Alert](./assets/expiryalert.gif)
+
 ---
 
 ## 💻 Tech Stack
