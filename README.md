@@ -2,14 +2,14 @@
 
 <div align="center">
   
-![HTML5](https://img.shields.io/badge/HTML5-000000?style=for-the-badge&logo=html5&logoColor=%23E34F26)
-![TailwindCSS](https://img.shields.io/badge/TAILWIND_CSS-000000?style=for-the-badge&logo=tailwind-css&logoColor=%2338B2AC)
-![JavaScript](https://img.shields.io/badge/JAVASCRIPT-000000?style=for-the-badge&logo=javascript&logoColor=%23F7DF1E)
-![Supabase](https://img.shields.io/badge/SUPABASE-000000?style=for-the-badge&logo=supabase&logoColor=%233ECF8E)
-![Vercel](https://img.shields.io/badge/VERCEL-000000?style=for-the-badge&logo=vercel&logoColor=white)
-![Chart.js](https://img.shields.io/badge/CHART.JS-000000?style=for-the-badge&logo=chart.js&logoColor=%23FF6384)
-![QR Code](https://img.shields.io/badge/QR_SCANNING-000000?style=for-the-badge&logo=qrcode&logoColor=%230078D4)
-![PWA](https://img.shields.io/badge/PWA-000000?style=for-the-badge&logo=pwa&logoColor=%2315A0A4)
+![HTML5](https://img.shields.io/badge/HTML5-E34F26?style=for-the-badge&logo=html5&logoColor=white)
+![TailwindCSS](https://img.shields.io/badge/TAILWIND_CSS-38B2AC?style=for-the-badge&logo=tailwind-css&logoColor=white)
+![JavaScript](https://img.shields.io/badge/JAVASCRIPT-F7DF1E?style=for-the-badge&logo=javascript&logoColor=black)
+![Supabase](https://img.shields.io/badge/SUPABASE-3ECF8E?style=for-the-badge&logo=supabase&logoColor=white)
+![Vercel](https://img.shields.io/badge/VERCEL-FFFFFF?style=for-the-badge&logo=vercel&logoColor=black)
+![Chart.js](https://img.shields.io/badge/CHART.JS-FF6384?style=for-the-badge&logo=chart.js&logoColor=white)
+![QR Code](https://img.shields.io/badge/QR_SCANNING-0078D4?style=for-the-badge&logo=qrcode&logoColor=white)
+![PWA](https://img.shields.io/badge/PWA-5A0FC8?style=for-the-badge&logo=pwa&logoColor=white)
 
 </div>
 
