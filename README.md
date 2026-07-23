@@ -5,7 +5,7 @@
 ![License: Proprietary](https://img.shields.io/badge/License-Proprietary%20(Portfolio)-emerald.svg)
 ![Status: Production Ready](https://img.shields.io/badge/Status-Production%20Ready-0284c7.svg)
 ![Deployment: Vercel](https://img.shields.io/badge/Deployment-Vercel-black.svg)
-![Tech: Vanilla JS / Tailwind / Supabase](https://img.shields.io/badge/Tech-Vanilla%20JS%20%7C%20Tailwind%20%7C%20Supabase-3b82f6.svg)
+![Supabase](https://img.shields.io/badge/Supabase-3FCF8E?logo=supabase&logoColor=fff)
 
 </div>
 
