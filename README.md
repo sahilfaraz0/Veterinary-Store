@@ -4,8 +4,9 @@
   
 ![License: Proprietary](https://img.shields.io/badge/License-Proprietary%20(Portfolio)-emerald.svg)
 ![Status: Production Ready](https://img.shields.io/badge/Status-Production%20Ready-0284c7.svg)
-![Deployment: Vercel](https://img.shields.io/badge/Deployment-Vercel-black.svg)
+[![Vercel](https://img.shields.io/badge/Vercel-%23000000.svg?logo=vercel&logoColor=white)](https://https://veterinary-store.vercel.app)
 ![Supabase](https://img.shields.io/badge/Supabase-3FCF8E?logo=supabase&logoColor=fff)
+![Chart.js](https://img.shields.io/badge/Chart.js-FF6384?logo=chartdotjs&logoColor=fff)
 
 </div>
 
