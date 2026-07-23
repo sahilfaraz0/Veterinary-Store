@@ -78,6 +78,7 @@ The repository is organized with a clean, flat architecture tailored for instant
 ├── vercel.json           # Vercel SPA Routing Rewrites & Static Caching Headers
 ├── sw.js                 # Offline Progressive Web App (PWA) Service Worker
 ├── manifest.json         # PWA Manifest & Mobile Installation Config
+|
 ├── assets/
 |   ├── expiryalert.gif   # Exipry Button Used For Showing Products Close to Exipry
 |   ├── login.gif         # Welcome Screen and Login Form
@@ -87,6 +88,7 @@ The repository is organized with a clean, flat architecture tailored for instant
 ├── css/
 │   ├── style.css         # Liquid Glassmorphism Tokens & Responsive Layout Utilities
 │   └── print.css         # Clean Invoice & Receipt Print Styles
+|
 ├── js/
 │   ├── app.js            # Core App Lifecycle, SPA Navigation & Modal Handlers
 │   ├── config.js         # Supabase Client Initialization, State & Utility Functions
@@ -99,6 +101,7 @@ The repository is organized with a clean, flat architecture tailored for instant
 │   ├── reports.js        # Financial & Analytics Visualizations (Chart.js)
 │   ├── admin.js          # Control Center, Staff Accounts & Security Audit Logs
 │   └── scanner.js        # Camera Barcode/QR Code Reader Integration
+|
 └── sql/
     ├── schema.sql        # Supabase PostgreSQL Tables, Functions, Triggers & RLS Policies
     └── seed_data.sql     # Generic Sanitized Demonstration Seed Records
