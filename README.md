@@ -79,7 +79,11 @@ The repository is organized with a clean, flat architecture tailored for instant
 ├── sw.js                 # Offline Progressive Web App (PWA) Service Worker
 ├── manifest.json         # PWA Manifest & Mobile Installation Config
 ├── assets/
-│   └── login.gif         # Welcome Screen and Login Form
+|   ├── expiryalert.gif   # Exipry Button Used For Showing Products Close to Exipry
+|   ├── login.gif         # Welcome Screen and Login Form
+│   ├── lowstock.gif      # Low Stock Button Used For Showing Products That Have A Low Stock Remaining
+│   └── supabase-schema   # PNG Image used for Showing the structure of the Backend Schema being utilizied
+|   
 ├── css/
 │   ├── style.css         # Liquid Glassmorphism Tokens & Responsive Layout Utilities
 │   └── print.css         # Clean Invoice & Receipt Print Styles
