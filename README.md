@@ -18,9 +18,8 @@
 ![Login Welcome](./assets/login.gif)
 
 **Admin Dashboard**
-https://github.com/user-attachments/assets/54b8fa2e-274d-4281-8c99-1bb68b0db524
 
-
+<video src="https://github.com/user-attachments/assets/54b8fa2e-274d-4281-8c99-1bb68b0db524" controls autoplay loop width="100%"></video>
 
 *(Add a secondary screenshot of the metrics or dashboard)*
 ![Admin Dashboard](./assets/admin-dashboard.png)
