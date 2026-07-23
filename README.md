@@ -18,8 +18,9 @@
 ![Login Welcome](./assets/login.gif)
 
 **Admin Dashboard**
+https://github.com/user-attachments/assets/54b8fa2e-274d-4281-8c99-1bb68b0db524
 
-<video src="https://github.com/sahilfaraz0/Veterinary-Store/raw/main/assets/dashboard.mp4" width="100%" controls muted autoplay loop></video>
+
 
 *(Add a secondary screenshot of the metrics or dashboard)*
 ![Admin Dashboard](./assets/admin-dashboard.png)
