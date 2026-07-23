@@ -69,7 +69,7 @@ The repository is organized with a clean, flat architecture tailored for instant
 ├── sw.js                 # Offline Progressive Web App (PWA) Service Worker
 ├── manifest.json         # PWA Manifest & Mobile Installation Config
 ├── assets/
-│   └── login.gif
+│   └── login.gif         # Welcome Screen and Login Form
 ├── css/
 │   ├── style.css         # Liquid Glassmorphism Tokens & Responsive Layout Utilities
 │   └── print.css         # Clean Invoice & Receipt Print Styles
