@@ -1,9 +1,13 @@
 # 🐾 Veterinary Store & Clinic - POS Management System
 
+<div align="center">
+  
 ![License: Proprietary](https://img.shields.io/badge/License-Proprietary%20(Portfolio)-emerald.svg)
 ![Status: Production Ready](https://img.shields.io/badge/Status-Production%20Ready-0284c7.svg)
 ![Deployment: Vercel](https://img.shields.io/badge/Deployment-Vercel-black.svg)
 ![Tech: Vanilla JS / Tailwind / Supabase](https://img.shields.io/badge/Tech-Vanilla%20JS%20%7C%20Tailwind%20%7C%20Supabase-3b82f6.svg)
+
+</div>
 
 **Veterinary Store & Clinic** is a state-of-the-art, full-stack Point of Sale (POS) and Veterinary Clinic Management Single-Page Application (SPA). Engineered with a stunning **Liquid Glassmorphism UI**, offline-first Progressive Web App (PWA) resilience, and cloud database synchronization, this platform streamlines high-speed retail checkout, inventory tracking, clinical patient relationship management (CRM), and business intelligence.
 
